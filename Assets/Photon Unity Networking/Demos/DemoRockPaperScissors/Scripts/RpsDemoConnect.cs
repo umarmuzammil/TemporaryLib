@@ -26,9 +26,9 @@ public class RpsDemoConnect : PunBehaviour
     public void ApplyUserIdAndConnect()
     {
 		string nickName = "DemoNick";
-        if (this.InputField != null && !string.IsNullOrEmpty(this.InputField.text))
+        if (InputField != null && !string.IsNullOrEmpty(InputField.text))
         {
-            nickName = this.InputField.text;
+            nickName = InputField.text;
 			PlayerPrefs.SetString(NickNamePlayerPrefsKey,nickName);
         }
         //if (string.IsNullOrEmpty(UserId))
@@ -48,7 +48,7 @@ public class RpsDemoConnect : PunBehaviour
 
 		PhotonNetwork.AuthValues.UserId = nickName;
 
-		Debug.Log("Nickname: " + nickName + " userID: " + this.UserId,this);
+		Debug.Log("Nickname: " + nickName + " userID: " + UserId,this);
 		
 
 
@@ -63,13 +63,13 @@ public class RpsDemoConnect : PunBehaviour
     public override void OnConnectedToMaster()
     {
         // after connect 
-        this.UserId = PhotonNetwork.player.UserId;
+        UserId = PhotonNetwork.player.UserId;
         ////Debug.Log("UserID " + this.UserId);
 
 		if (PlayerPrefs.HasKey(previousRoomPlayerPrefKey))
 		{
 			Debug.Log("getting previous room from prefs: ");
-			this.previousRoom = PlayerPrefs.GetString(previousRoomPlayerPrefKey);
+			previousRoom = PlayerPrefs.GetString(previousRoomPlayerPrefKey);
 			PlayerPrefs.DeleteKey(previousRoomPlayerPrefKey); // we don't keep this, it was only for initial recovery
 		}
 

@@ -16,17 +16,12 @@ public class ControllerMultiplayer : MonoBehaviour {
 
     public Text ballsCountTxt;
     public Text scoreTxt;
-    public Text bestScoreTxt;
     public Text plusScoreTxt;
     public Text plusBallTxt;
     public Text plusDotsTxt;
-    public Image superBallIcon;
-    public GameObject superBallEffect;
     public Transformer ballIcon;
     public BoxCollider spawnCollider;
 
-
-    public bool debugAim;
 
     private GameObject ring;
     private Shooter shooter;
@@ -46,7 +41,7 @@ public class ControllerMultiplayer : MonoBehaviour {
     private bool bonusSuperBallActive;              //Boolean to determine if superball bonus active or not
     private float superBallProgress;                //Float that keeps current superball progress value
     private int xpLevel;                            //Int that defines current XP level 
-    private int lastRecord;                         //Int that keeps current best score 
+
     private bool hitRecord;							//Boolean that defines if we already hitted last best score or not
 
 
@@ -78,12 +73,7 @@ public class ControllerMultiplayer : MonoBehaviour {
         shooter.newBallPosition = GetRandomPosInCollider();
     }
 
-    void Update() {
-        if (bonusSuperBallActive && !shooter.isBallThrown) {
-            superBallEffect.transform.parent = shooter.currentBall.transform;
-            superBallEffect.transform.localPosition = Vector3.zero;
-            superBallEffect.SetActive(true);
-        }
+    void Update() {      
     }
 
     void Goal(float distance, float height, bool floored, bool clear, bool special) {
@@ -151,23 +141,7 @@ public class ControllerMultiplayer : MonoBehaviour {
         if (floored) {
             int flooredScore = (int)distance * 2;
             plusScoreTxt.text += "+" + flooredScore.ToString("F0");
-            superBallProgress += 0.01f;
-        }
-
-        if (bonusSuperBallActive) {
-            int superBallScore = (int)(height * distance * 10);
-            comboScore += superBallScore;
-            plusScoreTxt.text += "+" + superBallScore.ToString("F0");
-            superBallProgress = 0;
-            bonusSuperBallActive = false;
-            superBallEffect.SetActive(false);
-        }
-        else {
-            if (superBallProgress >= 1) {
-                bonusSuperBallActive = true;
-                thisAudio.PlayOneShot(SoundController.data.bonusOpen);
-                superBallIcon.gameObject.GetComponent<Transformer>().ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 3);
-            }
+            superBallProgress += 0.01f;               
         }
 
         plusScoreTxt.gameObject.SetActive(true);
@@ -187,29 +161,13 @@ public class ControllerMultiplayer : MonoBehaviour {
                 bonusAimActive = false;
             }
         }
-
-        if (bonusRingActive) {
-            bonusRingThrows += 1;
-            if (bonusRingThrows == bonusRingThrowsLimit) {
-                comboGoals_bonusRing = 0;
-                StartCoroutine(ResetRing());
-            }
-        }
-
-        if (bonusSuperBallActive) {
-            superBallProgress = 0;
-            bonusSuperBallActive = false;
-            superBallEffect.SetActive(false);
-        }
-
+               
         BallCompleted();
     }
 
     void BallCompleted() {
         xpLevel = score > 2 * xpScoreStep ? score / xpScoreStep : 1;
-        superBallIcon.fillAmount = superBallProgress;
         UpdateBallsCount();
-        UpdateAimDotsNum();
         UpdateSpawnCollider();
         shooter.newBallPosition = GetRandomPosInCollider();
         shooter.spawnBall();
@@ -237,37 +195,15 @@ public class ControllerMultiplayer : MonoBehaviour {
 
     public void AddScore(int score) {
         this.score += score;
-        scoreTxt.text = this.score.ToString();
-        if (this.score > PlayerPrefs.GetInt("arcadeBestScore", 0)) {
-            bestScoreTxt.text = "BEST SCORE - " + this.score.ToString();
-            PlayerPrefs.SetInt("arcadeBestScore", this.score);
-            if (lastRecord > 0 && !hitRecord) {
-                HitNewRecord();
-            }
-        }
+        scoreTxt.text = this.score.ToString();        
 
     }
-
-    public void HitNewRecord() {
-        bestScoreTxt.color = Color.yellow;
-        bestScoreTxt.gameObject.GetComponent<Transformer>().ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 1);
-        SoundController.data.playNewRecord();
-        hitRecord = true;
-    }
-
     void UpdateBallsCount() {
         ballsCountTxt.text = currentBallsCount.ToString();
         if (currentBallsCount < 1) {
             GameController.data.Complete();
         }
-    }
-
-    public void UpdateAimDotsNum() {
-        if (bonusAimActive || debugAim)
-            Shooter.aimDotsNum = 60;
-        else
-            Shooter.aimDotsNum = Mathf.Clamp(31 - (xpLevel / 2), 8, 30);
-    }
+    }  
 
     void UpdateSpawnCollider() {
         float colLenght = Mathf.Clamp(19 + xpLevel, 20, 35);
@@ -280,14 +216,10 @@ public class ControllerMultiplayer : MonoBehaviour {
     public void ResetData() {
         currentBallsCount = startBallsCount;
         score = 0;
-        xpLevel = 1;
-        superBallIcon.fillAmount = 0;
+        xpLevel = 1; 
         UpdateBallsCount();
         UpdateSpawnCollider();
-        UpdateAimDotsNum();
-        scoreTxt.text = this.score.ToString();
-        lastRecord = PlayerPrefs.GetInt("arcadeBestScore", 0);
-        bestScoreTxt.text = "BEST SCORE - " + lastRecord;
+        scoreTxt.text = score.ToString();
     }
 
     private Vector3 GetRandomPosInCollider() {

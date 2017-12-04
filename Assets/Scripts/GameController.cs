@@ -55,7 +55,7 @@ public class GameController : MonoBehaviour {
 	}
 	
 	public void Restart(){
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 	
 	public void togglePause(){
@@ -82,7 +82,7 @@ public class GameController : MonoBehaviour {
 	
 	public void ClearPlayerPrefs(){
 		PlayerPrefs.DeleteAll();
-		 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 	
 }

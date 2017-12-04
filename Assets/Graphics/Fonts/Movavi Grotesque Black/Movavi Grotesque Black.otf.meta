@@ -3,16 +3,20 @@ guid: 61111c37a8e13b4419d9e0f91333809b
 timeCreated: 1432206745
 licenseType: Store
 TrueTypeFontImporter:
-  serializedVersion: 2
+  serializedVersion: 4
   fontSize: 16
   forceTextureCase: -2
-  characterSpacing: 1
-  characterPadding: 0
+  characterSpacing: 0
+  characterPadding: 1
   includeFontData: 1
-  use2xBehaviour: 0
-  fontNames: []
+  fontName: Movavi Grotesque
+  fontNames:
+  - Movavi Grotesque
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 1694ff880d999d646a200573550164b9, type: 3}
   customCharacters: 
   fontRenderingMode: 0
+  ascentCalculationMode: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 

@@ -8,12 +8,13 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 488160}
+  - component: {fileID: 114643467907949258}
+  - component: {fileID: 114759994746511086}
   - component: {fileID: 3316270}
   - component: {fileID: 2349798}
   - component: {fileID: 5471156}
   - component: {fileID: 8237172}
   - component: {fileID: 13579120}
-  - component: {fileID: 11405518}
   m_Layer: 9
   m_Name: ball multiplayer
   m_TagString: Untagged
@@ -167,29 +168,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &11405518
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 181448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aa10a233e83b9e44ab7664aa3193524, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standardMaterial: {fileID: 2100000, guid: 31c2d1dcf6c9bd442b6654cd94ab960a, type: 2}
-  fadeMaterial: {fileID: 2100000, guid: 4994c5e4259440948ae1a4a54e826bd2, type: 2}
-  thrown: 0
-  floored: 0
-  passed1: 0
-  passed2: 0
-  failed: 0
-  goaled: 0
-  special: 0
-  clear: 1
-  maxHeight: 0
-  audioSource: {fileID: 0}
 --- !u!135 &13579120
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -213,3 +191,54 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 181448}
   m_IsPrefabParent: 1
+--- !u!114 &114643467907949258
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerId: 0
+  group: 0
+  OwnerShipWasTransfered: 0
+  prefixBackup: -1
+  synchronization: 3
+  onSerializeTransformOption: 3
+  onSerializeRigidBodyOption: 2
+  ownershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 114759994746511086}
+  ObservedComponentsFoldoutOpen: 1
+  viewIdField: 0
+  instantiationId: -1
+  currentMasterID: -1
+  isRuntimeInstantiated: 0
+--- !u!114 &114759994746511086
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ce44019ec0c3d94182661be0bc1e6fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  standardMaterial: {fileID: 2100000, guid: 31c2d1dcf6c9bd442b6654cd94ab960a, type: 2}
+  fadeMaterial: {fileID: 2100000, guid: 4994c5e4259440948ae1a4a54e826bd2, type: 2}
+  thrown: 0
+  floored: 0
+  passed1: 0
+  passed2: 0
+  failed: 0
+  goaled: 0
+  special: 0
+  clear: 0
+  maxHeight: 0
+  audioSource: {fileID: 0}
+  smoothPosition: {x: 0, y: 0, z: 0}
+  smoothRotation: {x: 0, y: 0, z: 0, w: 0}

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-//This script works with its ball. Inter alia it sends an events to any listeners about its actions like thorowed, goaled, failed.
-public class Ball : MonoBehaviour {
+
+public class m_Ball : MonoBehaviour {
 	public Material standardMaterial, fadeMaterial;
 	[HideInInspector]
 	public bool thrown, floored, passed1, passed2, failed, goaled, special, clear;
@@ -21,16 +21,51 @@ public class Ball : MonoBehaviour {
     public static event ThrowAction OnThrow;
     public static event GoalAction OnGoal;
     public static event FailAction OnFail;
-	
-	void Awake(){
+
+    public Vector3 smoothPosition;
+    public Quaternion smoothRotation;
+    m_TurnController turnController;
+
+    void Awake(){
 		col = GetComponent<Renderer>().material.color;
 		ring = GameObject.FindWithTag("ring");
 		audioSource = GetComponent<AudioSource>();
 		thisRigidbody = GetComponent<Rigidbody>();
 	}
-	
-	void Update(){
-		if(failed || goaled) {
+
+    private void Start() {
+        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
+    }
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {   
+
+        if (stream.isWriting) {
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+            
+        }
+        else {
+                                    
+            smoothPosition = (Vector3)stream.ReceiveNext();
+            smoothRotation = (Quaternion)stream.ReceiveNext();
+        }
+    }
+
+
+    void Update(){
+
+        if (turnController.turn == m_TurnController.Turn.local && PhotonNetwork.isMasterClient) {
+            transform.position = Vector3.Lerp(transform.position, smoothPosition, Time.deltaTime * 5);
+            transform.rotation = Quaternion.Lerp(transform.rotation, smoothRotation, Time.deltaTime * 5);
+        }
+
+        if (turnController.turn == m_TurnController.Turn.remote && !PhotonNetwork.isMasterClient) {
+            transform.position = Vector3.Lerp(transform.position, smoothPosition, Time.deltaTime * 5);
+            transform.rotation = Quaternion.Lerp(transform.rotation, smoothRotation, Time.deltaTime * 5);
+        }
+
+
+
+        if (failed || goaled) {
 			FadeOut();
 		}
 		

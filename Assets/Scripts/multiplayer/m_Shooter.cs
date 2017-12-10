@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using Photon;
 
 //This scripts works with ball throwing system. 
-public class m_Shooter : MonoBehaviour {
+public class m_Shooter : PunBehaviour {
 	
     public Cloth net;											//The reference to net. Need to set in Cloth component balls colliders so cloth can interact with them.
     public GameObject TrajectoryPointPrefab;					//Aim point prefab
@@ -24,8 +25,11 @@ public class m_Shooter : MonoBehaviour {
 	private Vector3 ThrowForce;									//A vector that defines direction and power of the throw
 	private bool needBall;										//A booalen to know if we need to spawn new ball
 	private bool outOfscreen;
-	
+    m_TurnController turnController;
+    public bool valueAssigned = false;
+
     void Awake () {
+        
 		SpawnedObjects = new GameObject("SpawnedObjects");
 		GameObject dots = new GameObject("Dots");
 		dots.transform.parent = SpawnedObjects.transform;
@@ -40,64 +44,90 @@ public class m_Shooter : MonoBehaviour {
 		Balls = new List<GameObject>();
 		colPair = new ClothSphereColliderPair[5];
     }
- 
-    void Update () {
-		if(!m_GameController.data.isPlaying)
-			return;
-		if(needBall && !m_AdaptiveCamera.extraMode) {
-            Debug.Log("Going to call POOLBALL");
-			PoolBall();
-		}
-		
-        if(Input.GetMouseButtonDown(0) && !isPressed) {
-			if(EventSystem.current.IsPointerOverGameObject())
-				return;
-            isPressed = true;
-			mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        } else if(Input.GetMouseButtonUp(0) && isPressed) {
-            isPressed = false;
-            if(!isBallThrown && !outOfscreen) {
-				throwBall();
-				ClearDots();
-            } else {
-				ClearDots();
-			}
+
+    //****************************************************************************
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+              
+        if (stream.isWriting) {
+            stream.SendNext(newBallPosition);
+            Debug.Log("Is Sending");
         }
+        else {
+            Debug.Log("Is recieving");       
+            newBallPosition = (Vector3)stream.ReceiveNext();
+        }
+    }
+
+    private void Start() {
+        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
+    }
+
+    void Update () {
+        
+        if(valueAssigned) {
+            if (!m_GameController.data.isPlaying)
+                return;
+            if (needBall && !m_AdaptiveCamera.extraMode) {
+                PoolBall();
+            }
+
+            if (Input.GetMouseButtonDown(0) && !isPressed) {
+                if (EventSystem.current.IsPointerOverGameObject())
+                    return;
+                isPressed = true;
+                mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            }
+            else if (Input.GetMouseButtonUp(0) && isPressed) {
+                isPressed = false;
+                if (!isBallThrown && !outOfscreen) {
+                    throwBall();
+                    ClearDots();
+                }
+                else {
+                    ClearDots();
+                }
+            }
+        }          
     }
 	
 	void LateUpdate(){
-		if(!m_GameController.data.isPlaying)
-			return;
-		if(isPressed && !isBallThrown) {
-			if(inverseAim)
-				ThrowForce = -GetForceFrom(mouseStartPos,Camera.main.ScreenToWorldPoint(Input.mousePosition));
-			else
-				ThrowForce = GetForceFrom(mouseStartPos,Camera.main.ScreenToWorldPoint(Input.mousePosition));
-			float angle = Mathf.Atan2(ThrowForce.y,ThrowForce.x)* Mathf.Rad2Deg;
-			transform.eulerAngles = new Vector3(0,0,angle);
-			UpdateTrajectory(currentBall.transform.position, ThrowForce/ballRigidbody.mass);
-			float xPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
-			float yPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).y;
-			if(yPos < 0.03f || yPos > 0.97f || xPos < 0.03f || xPos > 0.97f) {
-				outOfscreen = true;
-				isPressed = false;
-				ClearDots();
-			} else {
-				outOfscreen = false;
-			}
-		}
+        if (valueAssigned) {
+            if (!m_GameController.data.isPlaying)
+                return;
+            if (isPressed && !isBallThrown) {
+                if (inverseAim)
+                    ThrowForce = -GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                else
+                    ThrowForce = GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                float angle = Mathf.Atan2(ThrowForce.y, ThrowForce.x) * Mathf.Rad2Deg;
+                transform.eulerAngles = new Vector3(0, 0, angle);
+                UpdateTrajectory(currentBall.transform.position, ThrowForce / ballRigidbody.mass);
+                float xPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
+                float yPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).y;
+                if (yPos < 0.03f || yPos > 0.97f || xPos < 0.03f || xPos > 0.97f) {
+                    outOfscreen = true;
+                    isPressed = false;
+                    ClearDots();
+                }
+                else {
+                    outOfscreen = false;
+                }
+            }
+        }
+        
 	}
  
     public void spawnBall() {
 		needBall = true;
 	}
 	
-	void PoolBall(){
-		needBall = false;
+	void PoolBall(){        
+        needBall = false;
 		isBallThrown = false;
 		for (int i=0; i < Balls.Count; i++){
 			if(!Balls[i].activeInHierarchy) {
-				addBallCollider2Net(Balls[i].GetComponent<SphereCollider>());
+                addBallCollider2Net(Balls[i].GetComponent<SphereCollider>());
+                //Debug.Log(newBallPosition);
 				Balls[i].transform.position = newBallPosition;
 				Balls[i].transform.rotation = GetRandomRot();
 				Balls[i].SetActive(true);
@@ -141,8 +171,8 @@ public class m_Shooter : MonoBehaviour {
         ballRigidbody.AddTorque(0,0,-30);
         ballRigidbody.constraints = RigidbodyConstraints.None;
         isBallThrown = true;
-		currentBall.GetComponent<Ball>().SetThrown();
-		currentBall.GetComponent<Ball>().audioSource.PlayOneShot(SoundController.data.ballWoofs[Random.Range(0,SoundController.data.ballWoofs.Length)],1);
+		currentBall.GetComponent<m_Ball>().SetThrown();
+		currentBall.GetComponent<m_Ball>().audioSource.PlayOneShot(SoundController.data.ballWoofs[Random.Range(0,SoundController.data.ballWoofs.Length)],1);
     }
  
     private Vector2 GetForceFrom(Vector3 fromPos, Vector3 toPos) {

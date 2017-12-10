@@ -18,9 +18,13 @@ public class m_AdaptiveCamera : MonoBehaviour {
 	private Vector3 lastPos;
 	private Quaternion lastRot;
 	private static bool colorChanged;
-	
-	void Start () {
-		thisCamera = GetComponent<Camera>();
+
+    m_TurnController turnController;
+
+    void Start () {
+
+        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
+        thisCamera = GetComponent<Camera>();
 		shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
 		basket = GameObject.Find("ring").GetComponent<Transform>();
 		extraMode = false;
@@ -28,13 +32,14 @@ public class m_AdaptiveCamera : MonoBehaviour {
 	
 	
 	void Update () {
-		if(!m_GameController.data.isPlaying) {
+     
+        if (!m_GameController.data.isPlaying) {
 			if(extraMode && m_GameController.data.gameState != m_GameController.State.Paused)
 				GoToNormal();
 			return;
 		}
 			
-		if(shooter.currentBall.GetComponent<Ball>().special && shooter.currentBall.GetComponent<Ball>().clear && CamExtraMode != Mode.Off && shooter.currentBall != null && !extraMode) {
+		if(shooter.currentBall.GetComponent<m_Ball>().special && shooter.currentBall.GetComponent<m_Ball>().clear && CamExtraMode != Mode.Off && shooter.currentBall != null && !extraMode) {
 			extraMode = true;
 			lastPos = transform.position;
 			lastRot = transform.rotation;
@@ -77,7 +82,7 @@ public class m_AdaptiveCamera : MonoBehaviour {
 	}
 	
 	void UpdateUnderBoardCam(){
-		if(shooter.currentBall.transform.position.y > basket.position.y-0.5f && !shooter.currentBall.GetComponent<Ball>().failed) {
+		if(shooter.currentBall.transform.position.y > basket.position.y-0.5f && !shooter.currentBall.GetComponent<m_Ball>().failed) {
 			transform.position = new Vector3(-6.5f,1.4f,-2.3f);
 			transform.LookAt(shooter.currentBall.transform);
 		} else {
@@ -86,7 +91,7 @@ public class m_AdaptiveCamera : MonoBehaviour {
 	}
 	
 	void UpdateFollowBallCam(){
-		if(shooter.currentBall.transform.position.y > basket.position.y-0.5f && !shooter.currentBall.GetComponent<Ball>().failed) {
+		if(shooter.currentBall.transform.position.y > basket.position.y-0.5f && !shooter.currentBall.GetComponent<m_Ball>().failed) {
 			transform.position = new Vector3(shooter.currentBall.transform.position.x+2, shooter.currentBall.transform.position.y*1.1f,0);
 			if(transform.position.x > basket.transform.position.x)
 				transform.LookAt(basket);

@@ -14,13 +14,16 @@ namespace com.Basket.Graystork {
         bool isConnecting = false;
         string _gameVersion = "1";
         public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
-        public byte MaxPlayersPerRoom = 4;
+        public byte MaxPlayersPerRoom = 2;
 
         private void Start() {
             PhotonNetwork.autoJoinLobby = false;
             PhotonNetwork.automaticallySyncScene = true;
         }
 
+        private void Update() {           
+
+        }
         private void Awake() {
             PhotonNetwork.logLevel = Loglevel;
         }
@@ -70,10 +73,17 @@ namespace com.Basket.Graystork {
             PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = MaxPlayersPerRoom }, null);
 
         }
-
+                
         public override void OnJoinedRoom() {
             Debug.Log("I Joined the room");  //Join Room Stuff Goes Here.
+            
+            if(PhotonNetwork.room.PlayerCount == 2 ) {
+                photonView.RPC("Loadlevel", PhotonTargets.All, null);
+            }
+        }
 
+        [PunRPC]
+        void Loadlevel() {
             PhotonNetwork.LoadLevel("MultiplayerGameScene");
         }
     }

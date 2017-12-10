@@ -1,10 +1,10 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon;
 
 [RequireComponent(typeof(m_GameController))]
-public class m_ControllerMultiplayer : MonoBehaviour {
+public class m_ControllerMultiplayer : PunBehaviour  {
 
     public int startBallsCount = 10;                //Balls count we start with
     public int bonusRingClearCombo = 3;             //Count of clear goals in a row to get big rinf bonus
@@ -25,6 +25,7 @@ public class m_ControllerMultiplayer : MonoBehaviour {
 
     private GameObject ring;
     private m_Shooter shooter;
+    private m_TurnController turnController;
     private AudioSource thisAudio;
 
     private int currentBallsCount;                  //Current amount of balls left to throw
@@ -44,6 +45,7 @@ public class m_ControllerMultiplayer : MonoBehaviour {
 
     private bool hitRecord;							//Boolean that defines if we already hitted last best score or not
 
+    Vector3 RandomPos;
 
     void OnEnable() {
         Ball.OnGoal += Goal;
@@ -66,16 +68,26 @@ public class m_ControllerMultiplayer : MonoBehaviour {
     }
     void Start() {
         ring = GameObject.Find("ring");
+
+        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
         shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
         thisAudio = GetComponent<AudioSource>();
         currentBallsCount = startBallsCount;
         ResetData();
-        shooter.newBallPosition = GetRandomPosInCollider();
+
+        if (turnController.turn == m_TurnController.Turn.local && PhotonNetwork.isMasterClient) {
+            RandomPos = GetRandomPosInCollider();
+            photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);
+        }
+
     }
 
-    void Update() {      
+    [PunRPC]
+    void AssignRandomValue(Vector3 _RandomPos) {    
+        shooter.newBallPosition = _RandomPos;
+        shooter.valueAssigned = true;
     }
-
+        
     void Goal(float distance, float height, bool floored, bool clear, bool special) {
         comboGoals += 1;
         superBallProgress += 0.01f;

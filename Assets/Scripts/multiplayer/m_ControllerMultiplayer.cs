@@ -77,7 +77,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     [PunRPC]
     void AssignRandomValue(Vector3 _RandomPos) {    
         shooter.newBallPosition = _RandomPos;
-        GameController.data.StartPlay();
+        m_GameController.data.StartPlay();
     }
         
     void Goal(float distance, float height, bool floored, bool clear, bool special) {

@@ -44,4 +44,5 @@ MonoBehaviour:
   - TaggedPlayer
   - Loadlevel
   - AssignRandomValue
+  - throwBall
   DisableAutoOpenWizard: 1

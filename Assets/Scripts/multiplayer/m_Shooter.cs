@@ -81,10 +81,8 @@ public class m_Shooter : PunBehaviour {
         else if (Input.GetMouseButtonUp(0) && isPressed) {
             isPressed = false;
             if (!isBallThrown && !outOfscreen) {
-
-                if (turnController._myTurn == turnController._activeTurn)
-                    mouseFinalPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);  //additional multiplayer code
                 photonView.RPC("throwBall", PhotonTargets.All, mouseStartPos, mouseFinalPos);
+                Debug.Log(mouseFinalPos);
                 //throwBall( mouseStartPos, mouseFinalPos);
                 ClearDots();
             }
@@ -98,7 +96,13 @@ public class m_Shooter : PunBehaviour {
     void LateUpdate(){        
         if (!m_GameController.data.isPlaying)
             return;
+
+        #region This is where trajectory is updating if it is pressed but not thrown.
         if (isPressed && !isBallThrown) {
+
+            if (turnController._myTurn == turnController._activeTurn) 
+                mouseFinalPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);  //additional multiplayer code
+              
             if (inverseAim)
                 ThrowForce = -GetForceFrom(mouseStartPos, mouseFinalPos);
             else
@@ -116,10 +120,10 @@ public class m_Shooter : PunBehaviour {
             else {
                 outOfscreen = false;
             }
-        }    
-        
-	}
- 
+        }
+        #endregion
+    }
+
     public void spawnBall() {
 		needBall = true;
 	}
@@ -173,6 +177,8 @@ public class m_Shooter : PunBehaviour {
         if (turnController._myTurn != turnController._activeTurn) {
             mouseStartPos = _mouseStartPos;
             mouseFinalPos = _mouseFinalPos;
+            ThrowForce = GetForceFrom(mouseStartPos, mouseFinalPos);
+            Debug.Log(mouseFinalPos);
         }
 
         ballRigidbody.isKinematic = false;

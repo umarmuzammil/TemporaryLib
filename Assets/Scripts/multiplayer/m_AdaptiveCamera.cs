@@ -43,8 +43,7 @@ public class m_AdaptiveCamera : MonoBehaviour {
 			extraMode = true;
 			lastPos = transform.position;
 			lastRot = transform.rotation;
-			thisCamera.orthographic = false;
-			m_GameController.data.switchMaxHeightUI();
+			thisCamera.orthographic = false;			
 			switch(CamExtraMode){
 				case Mode.UnderBoard:
 					thisCamera.fieldOfView = 95;
@@ -107,7 +106,6 @@ public class m_AdaptiveCamera : MonoBehaviour {
 		thisCamera.orthographic = true;
 		transform.position = lastPos;
 		transform.rotation = lastRot;
-		m_GameController.data.switchMaxHeightUI();
 	}
 	
 	public static void ResizeCam(float newSize){

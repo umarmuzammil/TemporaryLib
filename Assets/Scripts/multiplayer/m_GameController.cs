@@ -8,7 +8,6 @@ public class m_GameController : MonoBehaviour {
 	
 	public GameObject completePanel;
 	public GameObject pausePanel;
-	public Text maxHeightTxt;
 	private m_Shooter shooter;
 	public bool isPlaying;
 	public enum State {InGame, Paused, Complete, StartUp}
@@ -19,31 +18,20 @@ public class m_GameController : MonoBehaviour {
 		data = this;
 		Time.timeScale = 1.5f;
 		shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
-		BroadcastMessage("ShowStartPanel");
-		gameState = State.StartUp;
+        //StartPlay();
+        gameState = State.StartUp;
 		AudioListener.volume = PlayerPrefs.GetInt("sound", 1);
 	}
 	
 	void Start(){
 		shooter.inverseAim = PlayerPrefs.GetInt("inverseAim", 0) == 1 ? true : false;
-	}
-	
-	void Update () {
-		if(m_AdaptiveCamera.extraMode) {
-			maxHeightTxt.text = (shooter.currentBall.GetComponent<Ball>().maxHeight).ToString("F2")+" M";
-		}
-		
-		if (Input.GetKeyDown("escape"))
-			togglePause();
-		if (Input.GetKey(KeyCode.R))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-	}
-	
-	public void StartPlay(){
-		isPlaying = true;
-		gameState = State.InGame;
+	}	
+    
+    	
+	public void StartPlay(){       
+        isPlaying = true;
+        gameState = State.InGame;
 		shooter.spawnBall();
-		BroadcastMessage("HideStartPanel");
 		m_AdaptiveCamera.extraMode = false;
 	}
 	
@@ -74,10 +62,6 @@ public class m_GameController : MonoBehaviour {
 	
 	public void switchAim(){
 		shooter.inverseAim =! shooter.inverseAim;
-	}
-	
-	public void switchMaxHeightUI(){
-		maxHeightTxt.gameObject.transform.parent.gameObject.SetActive(m_AdaptiveCamera.extraMode);
 	}
 	
 	public void ClearPlayerPrefs(){

@@ -53,7 +53,7 @@ public class m_Ball : MonoBehaviour {
 
     void Update(){
 
-        if (turnController.turn == m_TurnController.Turn.local && PhotonNetwork.isMasterClient) {
+        /*if (turnController.turn == m_TurnController.Turn.local && PhotonNetwork.isMasterClient) {
             transform.position = Vector3.Lerp(transform.position, smoothPosition, Time.deltaTime * 5);
             transform.rotation = Quaternion.Lerp(transform.rotation, smoothRotation, Time.deltaTime * 5);
         }
@@ -61,7 +61,7 @@ public class m_Ball : MonoBehaviour {
         if (turnController.turn == m_TurnController.Turn.remote && !PhotonNetwork.isMasterClient) {
             transform.position = Vector3.Lerp(transform.position, smoothPosition, Time.deltaTime * 5);
             transform.rotation = Quaternion.Lerp(transform.rotation, smoothRotation, Time.deltaTime * 5);
-        }
+        }*/
 
 
 

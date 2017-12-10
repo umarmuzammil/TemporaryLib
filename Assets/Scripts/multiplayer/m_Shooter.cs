@@ -26,7 +26,7 @@ public class m_Shooter : PunBehaviour {
 	private bool needBall;										//A booalen to know if we need to spawn new ball
 	private bool outOfscreen;
     m_TurnController turnController;
-    public bool valueAssigned = false;
+
 
     void Awake () {
         
@@ -43,6 +43,7 @@ public class m_Shooter : PunBehaviour {
         }
 		Balls = new List<GameObject>();
 		colPair = new ClothSphereColliderPair[5];
+        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
     }
 
     //****************************************************************************
@@ -58,62 +59,54 @@ public class m_Shooter : PunBehaviour {
         }
     }
 
-    private void Start() {
-        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
-    }
+    void Update () {       
 
-    void Update () {
-        
-        if(valueAssigned) {
-            if (!m_GameController.data.isPlaying)
+        if (!m_GameController.data.isPlaying)
+            return;
+        if (needBall && !m_AdaptiveCamera.extraMode) {
+            PoolBall();
+        }
+
+        if (Input.GetMouseButtonDown(0) && !isPressed) {
+            if (EventSystem.current.IsPointerOverGameObject())
                 return;
-            if (needBall && !m_AdaptiveCamera.extraMode) {
-                PoolBall();
+            isPressed = true;
+            mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
+        else if (Input.GetMouseButtonUp(0) && isPressed) {
+            isPressed = false;
+            if (!isBallThrown && !outOfscreen) {
+                throwBall();
+                ClearDots();
             }
-
-            if (Input.GetMouseButtonDown(0) && !isPressed) {
-                if (EventSystem.current.IsPointerOverGameObject())
-                    return;
-                isPressed = true;
-                mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            else {
+                ClearDots();
             }
-            else if (Input.GetMouseButtonUp(0) && isPressed) {
-                isPressed = false;
-                if (!isBallThrown && !outOfscreen) {
-                    throwBall();
-                    ClearDots();
-                }
-                else {
-                    ClearDots();
-                }
-            }
-        }          
+        }              
     }
 	
-	void LateUpdate(){
-        if (valueAssigned) {
-            if (!m_GameController.data.isPlaying)
-                return;
-            if (isPressed && !isBallThrown) {
-                if (inverseAim)
-                    ThrowForce = -GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                else
-                    ThrowForce = GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                float angle = Mathf.Atan2(ThrowForce.y, ThrowForce.x) * Mathf.Rad2Deg;
-                transform.eulerAngles = new Vector3(0, 0, angle);
-                UpdateTrajectory(currentBall.transform.position, ThrowForce / ballRigidbody.mass);
-                float xPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
-                float yPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).y;
-                if (yPos < 0.03f || yPos > 0.97f || xPos < 0.03f || xPos > 0.97f) {
-                    outOfscreen = true;
-                    isPressed = false;
-                    ClearDots();
-                }
-                else {
-                    outOfscreen = false;
-                }
+	void LateUpdate(){        
+        if (!m_GameController.data.isPlaying)
+            return;
+        if (isPressed && !isBallThrown) {
+            if (inverseAim)
+                ThrowForce = -GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            else
+                ThrowForce = GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            float angle = Mathf.Atan2(ThrowForce.y, ThrowForce.x) * Mathf.Rad2Deg;
+            transform.eulerAngles = new Vector3(0, 0, angle);
+            UpdateTrajectory(currentBall.transform.position, ThrowForce / ballRigidbody.mass);
+            float xPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).x;
+            float yPos = Camera.main.ScreenToViewportPoint(Input.mousePosition).y;
+            if (yPos < 0.03f || yPos > 0.97f || xPos < 0.03f || xPos > 0.97f) {
+                outOfscreen = true;
+                isPressed = false;
+                ClearDots();
             }
-        }
+            else {
+                outOfscreen = false;
+            }
+        }    
         
 	}
  
@@ -127,7 +120,6 @@ public class m_Shooter : PunBehaviour {
 		for (int i=0; i < Balls.Count; i++){
 			if(!Balls[i].activeInHierarchy) {
                 addBallCollider2Net(Balls[i].GetComponent<SphereCollider>());
-                //Debug.Log(newBallPosition);
 				Balls[i].transform.position = newBallPosition;
 				Balls[i].transform.rotation = GetRandomRot();
 				Balls[i].SetActive(true);

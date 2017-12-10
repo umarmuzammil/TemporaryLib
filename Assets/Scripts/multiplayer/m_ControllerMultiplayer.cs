@@ -48,44 +48,36 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     Vector3 RandomPos;
 
     void OnEnable() {
-        Ball.OnGoal += Goal;
-        Ball.OnFail += Fail;
+        m_Ball.OnGoal += Goal;
+        m_Ball.OnFail += Fail;
     }
 
     void OnDisable() {
-        Ball.OnGoal -= Goal;
-        Ball.OnFail -= Fail;
+        m_Ball.OnGoal -= Goal;
+        m_Ball.OnFail -= Fail;
     }
 
     void Awake() {
         m_Shooter.aimDotsNum = 60;
     }
-    void ShowStartPanel() {
-        GetComponent<m_GameController>().StartPlay();
-    }
-    void HideStartPanel() {   ///Only to make it workable with GameController
-
-    }
+   
     void Start() {
         ring = GameObject.Find("ring");
-
         turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
         shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
         thisAudio = GetComponent<AudioSource>();
         currentBallsCount = startBallsCount;
         ResetData();
-
-        if (turnController.turn == m_TurnController.Turn.local && PhotonNetwork.isMasterClient) {
+        if (PhotonNetwork.isMasterClient) {
             RandomPos = GetRandomPosInCollider();
-            photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);
+            photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);            
         }
-
-    }
+    }  
 
     [PunRPC]
     void AssignRandomValue(Vector3 _RandomPos) {    
         shooter.newBallPosition = _RandomPos;
-        shooter.valueAssigned = true;
+        GameController.data.StartPlay();
     }
         
     void Goal(float distance, float height, bool floored, bool clear, bool special) {
@@ -210,6 +202,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         scoreTxt.text = this.score.ToString();        
 
     }
+
     void UpdateBallsCount() {
         ballsCountTxt.text = currentBallsCount.ToString();
         if (currentBallsCount < 1) {

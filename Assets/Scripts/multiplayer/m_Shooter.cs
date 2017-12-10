@@ -61,15 +61,16 @@ public class m_Shooter : PunBehaviour {
 
     void Update () {
 
-        if (turnController._myTurn != turnController._activeTurn)
-            return;        
-
+        
         #region default update code 
         if (!m_GameController.data.isPlaying)
             return;
         if (needBall && !m_AdaptiveCamera.extraMode) {
             PoolBall();
         }
+
+        if (turnController._myTurn != turnController._activeTurn)
+            return;
 
         if (Input.GetMouseButtonDown(0) && !isPressed) {
             if (EventSystem.current.IsPointerOverGameObject())

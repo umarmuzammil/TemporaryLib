@@ -18,7 +18,6 @@ public class m_GameController : MonoBehaviour {
 		data = this;
 		Time.timeScale = 1.5f;
 		shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
-        //StartPlay();
         gameState = State.StartUp;
 		AudioListener.volume = PlayerPrefs.GetInt("sound", 1);
 	}

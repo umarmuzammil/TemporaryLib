@@ -47,7 +47,7 @@ public class m_Shooter : PunBehaviour {
     }
 
     //****************************************************************************
-    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+   /* void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
               
         if (stream.isWriting) {
             stream.SendNext(newBallPosition);
@@ -57,7 +57,7 @@ public class m_Shooter : PunBehaviour {
             Debug.Log("Is recieving");       
             newBallPosition = (Vector3)stream.ReceiveNext();
         }
-    }
+    }*/
 
     void Update () {       
 

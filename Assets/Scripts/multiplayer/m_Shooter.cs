@@ -26,7 +26,7 @@ public class m_Shooter : PunBehaviour {
 	private bool needBall;										//A booalen to know if we need to spawn new ball
 	private bool outOfscreen;
     m_TurnController turnController;
-
+    Vector3 mouseFinalPos;
 
     void Awake () {
         
@@ -59,8 +59,12 @@ public class m_Shooter : PunBehaviour {
         }
     }*/
 
-    void Update () {       
+    void Update () {
 
+        if (turnController._myTurn != turnController._activeTurn)
+            return;        
+
+        #region default update code 
         if (!m_GameController.data.isPlaying)
             return;
         if (needBall && !m_AdaptiveCamera.extraMode) {
@@ -76,23 +80,28 @@ public class m_Shooter : PunBehaviour {
         else if (Input.GetMouseButtonUp(0) && isPressed) {
             isPressed = false;
             if (!isBallThrown && !outOfscreen) {
-                throwBall();
+
+                if (turnController._myTurn == turnController._activeTurn)
+                    mouseFinalPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);  //additional multiplayer code
+                photonView.RPC("throwBall", PhotonTargets.All, mouseStartPos, mouseFinalPos);
+                //throwBall( mouseStartPos, mouseFinalPos);
                 ClearDots();
             }
             else {
                 ClearDots();
             }
-        }              
+        }
+        #endregion
     }
-	
-	void LateUpdate(){        
+
+    void LateUpdate(){        
         if (!m_GameController.data.isPlaying)
             return;
         if (isPressed && !isBallThrown) {
             if (inverseAim)
-                ThrowForce = -GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                ThrowForce = -GetForceFrom(mouseStartPos, mouseFinalPos);
             else
-                ThrowForce = GetForceFrom(mouseStartPos, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                ThrowForce = GetForceFrom(mouseStartPos, mouseFinalPos);
             float angle = Mathf.Atan2(ThrowForce.y, ThrowForce.x) * Mathf.Rad2Deg;
             transform.eulerAngles = new Vector3(0, 0, angle);
             UpdateTrajectory(currentBall.transform.position, ThrowForce / ballRigidbody.mass);
@@ -157,7 +166,14 @@ public class m_Shooter : PunBehaviour {
 		return randRot;
 	}
 	
-    private void throwBall() { 
+    [PunRPC]
+    private void throwBall(Vector3 _mouseStartPos, Vector3 _mouseFinalPos) {
+
+        if (turnController._myTurn != turnController._activeTurn) {
+            mouseStartPos = _mouseStartPos;
+            mouseFinalPos = _mouseFinalPos;
+        }
+
         ballRigidbody.isKinematic = false;
         ballRigidbody.AddForce(ThrowForce,ForceMode.Impulse);
         ballRigidbody.AddTorque(0,0,-30);

@@ -13,23 +13,34 @@ public class m_TurnController : PunBehaviour {
         none = 0,local, remote
     }
 
+    [SerializeField]
+    private Turn myTurn;
+    [SerializeField]
+    private Turn activeTurn;
 
-    public Turn turn;
+
+    public Turn _myTurn {
+        get { return myTurn; }
+    }
+       
+    public Turn _activeTurn {
+        get { return activeTurn; }
+    }
+    
+
 
     private float time = 0;
-    public float turnDuration = 30;
-    
+    public float turnDuration = 30;    
     public Text turntext;
-    //Room room;
-    private void Start() {
 
-        //room = PhotonNetwork.room;
-        //room.CustomProperties.Add("Turn", turn);
+    private void Start() {     
+
+        myTurn = (PhotonNetwork.isMasterClient) ? Turn.local : Turn.remote;
         turntext.text = turnDuration.ToString();
-        turn = Turn.local;
+        activeTurn = Turn.local;
         
-    }
-
+    }      
+             
 
 
     private void Update() {
@@ -39,7 +50,7 @@ public class m_TurnController : PunBehaviour {
 
         if(time > turnDuration) {
             time = 0;
-            turn = switchTurn(turn);            
+            activeTurn = switchTurn(activeTurn);            
         }
     }
 
@@ -51,10 +62,10 @@ public class m_TurnController : PunBehaviour {
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
         if (stream.isWriting) {
-            stream.SendNext(turn);
+            stream.SendNext(activeTurn);
         }
         else {
-            turn = (Turn)stream.ReceiveNext();
+            activeTurn = (Turn)stream.ReceiveNext();
         }
     }
 }

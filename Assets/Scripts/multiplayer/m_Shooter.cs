@@ -172,13 +172,12 @@ public class m_Shooter : PunBehaviour {
 	}
 	
     [PunRPC]
-    private void throwBall(Vector3 _mouseStartPos, Vector3 _mouseFinalPos) {
+    private void throwBall(Vector3 _mouseStartPos, Vector3 _mouseFinalPos) {        
 
         if (turnController._myTurn != turnController._activeTurn) {
             mouseStartPos = _mouseStartPos;
             mouseFinalPos = _mouseFinalPos;
-            ThrowForce = GetForceFrom(mouseStartPos, mouseFinalPos);
-            Debug.Log(mouseFinalPos);
+            ThrowForce = GetForceFrom(mouseStartPos, mouseFinalPos);            
         }
 
         ballRigidbody.isKinematic = false;

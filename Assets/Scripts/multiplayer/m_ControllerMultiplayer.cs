@@ -72,7 +72,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             RandomPos = GetRandomPosInCollider();
             photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);            
         }
-    }  
+    }
 
     [PunRPC]
     void AssignRandomValue(Vector3 _RandomPos) {    
@@ -173,9 +173,20 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         xpLevel = score > 2 * xpScoreStep ? score / xpScoreStep : 1;
         UpdateBallsCount();
         UpdateSpawnCollider();
-        shooter.newBallPosition = GetRandomPosInCollider();
+
+        if (turnController._activeTurn == turnController._myTurn) {
+            Vector3 newBallPos = GetRandomPosInCollider();
+            photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);
+        }        
+    }
+    
+    [PunRPC]
+    void NextRandomPos(Vector3 _newBallPos) {
+        shooter.newBallPosition = _newBallPos;
+        turnController._time = turnController.turnDuration + 10;
         shooter.spawnBall();
     }
+        
 
     IEnumerator GrowRing() {
         yield return new WaitForSeconds(0.5f);

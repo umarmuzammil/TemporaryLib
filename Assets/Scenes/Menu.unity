@@ -4686,7 +4686,7 @@ GameObject:
   - component: {fileID: 1606722638}
   - component: {fileID: 1606722640}
   m_Layer: 0
-  m_Name: InitConnection
+  m_Name: ConnectionManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -5,9 +5,6 @@ using UnityEngine.UI;
 using Photon;
 
 public class m_TurnController : PunBehaviour {
-    
-
-
 
     public enum Turn {
         none = 0,local, remote
@@ -30,6 +27,13 @@ public class m_TurnController : PunBehaviour {
 
 
     private float time = 0;
+
+    public float _time {
+        get { return time; }
+        set { time = value; }
+    }
+
+
     public float turnDuration = 30;    
     public Text turntext;
 
@@ -45,8 +49,10 @@ public class m_TurnController : PunBehaviour {
 
     private void Update() {
                 
-        time += Time.deltaTime;   
-        turntext.text = (turnDuration - (int)time).ToString();
+        time += Time.deltaTime;
+
+        float textTime = Mathf.Clamp((turnDuration - (int)time), 0, 30);
+        turntext.text = textTime.ToString();
 
         if(time > turnDuration) {
             time = 0;

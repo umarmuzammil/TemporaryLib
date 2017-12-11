@@ -30,7 +30,7 @@ public class m_TurnController : PunBehaviour {
 
     public float _time {
         get { return time; }
-        set { time = value; }
+        //set { time = value; }
     }
 
 
@@ -50,19 +50,20 @@ public class m_TurnController : PunBehaviour {
     private void Update() {
                 
         time += Time.deltaTime;
+        Debug.Log((int)time);
 
+        //Displaying on Text Field 
         float textTime = Mathf.Clamp((turnDuration - (int)time), 0, 30);
         turntext.text = textTime.ToString();
 
-        if(time > turnDuration) {
-            time = 0;
-            activeTurn = switchTurn(activeTurn);            
+        if(time > turnDuration) {            
+            switchTurn();
         }
     }
 
-    public Turn switchTurn(Turn _turn) {
-        _turn = (_turn == Turn.local) ? _turn = Turn.remote : _turn = Turn.local;
-        return _turn;
+    public void switchTurn() {
+        activeTurn = (activeTurn == Turn.local) ? Turn.remote : Turn.local;
+        time = 0;
     }
 
 

@@ -164,8 +164,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
                 bonusAimThrows = comboGoals_bonusAim = 0;
                 bonusAimActive = false;
             }
-        }
-               
+        }               
         BallCompleted();
     }
 
@@ -177,13 +176,14 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         if (turnController._activeTurn == turnController._myTurn) {
             Vector3 newBallPos = GetRandomPosInCollider();
             photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);
-        }        
+        }
     }
     
     [PunRPC]
-    void NextRandomPos(Vector3 _newBallPos) {
+    IEnumerator NextRandomPos(Vector3 _newBallPos) {
         shooter.newBallPosition = _newBallPos;
-        turnController._time = turnController.turnDuration + 10;
+        turnController.switchTurn();
+        yield return new WaitForEndOfFrame();
         shooter.spawnBall();
     }
         

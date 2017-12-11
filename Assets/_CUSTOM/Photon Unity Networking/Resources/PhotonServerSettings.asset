@@ -45,4 +45,5 @@ MonoBehaviour:
   - Loadlevel
   - AssignRandomValue
   - throwBall
+  - NextRandomPos
   DisableAutoOpenWizard: 1

@@ -36,34 +36,8 @@ public class m_Ball : MonoBehaviour {
     private void Start() {
         turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
     }
-    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {   
 
-        if (stream.isWriting) {
-            stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
-            
-        }
-        else {
-                                    
-            smoothPosition = (Vector3)stream.ReceiveNext();
-            smoothRotation = (Quaternion)stream.ReceiveNext();
-        }
-    }
-
-
-    void Update(){
-
-        /*if (turnController.turn == m_TurnController.Turn.local && PhotonNetwork.isMasterClient) {
-            transform.position = Vector3.Lerp(transform.position, smoothPosition, Time.deltaTime * 5);
-            transform.rotation = Quaternion.Lerp(transform.rotation, smoothRotation, Time.deltaTime * 5);
-        }
-
-        if (turnController.turn == m_TurnController.Turn.remote && !PhotonNetwork.isMasterClient) {
-            transform.position = Vector3.Lerp(transform.position, smoothPosition, Time.deltaTime * 5);
-            transform.rotation = Quaternion.Lerp(transform.rotation, smoothRotation, Time.deltaTime * 5);
-        }*/
-
-
+    void Update(){ 
 
         if (failed || goaled) {
 			FadeOut();

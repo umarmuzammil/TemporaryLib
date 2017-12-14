@@ -22,9 +22,10 @@ public class m_Ball : MonoBehaviour {
     public static event GoalAction OnGoal;
     public static event FailAction OnFail;
 
-    public Vector3 smoothPosition;
-    public Quaternion smoothRotation;
-    m_TurnController turnController;
+    /*m_TurnController turnController;
+    private void Start() {
+        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
+    }*/
 
     void Awake(){
 		col = GetComponent<Renderer>().material.color;
@@ -33,9 +34,7 @@ public class m_Ball : MonoBehaviour {
 		thisRigidbody = GetComponent<Rigidbody>();
 	}
 
-    private void Start() {
-        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
-    }
+    
 
     void Update(){ 
 

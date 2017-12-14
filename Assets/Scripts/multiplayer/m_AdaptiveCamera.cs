@@ -19,11 +19,11 @@ public class m_AdaptiveCamera : MonoBehaviour {
 	private Quaternion lastRot;
 	private static bool colorChanged;
 
-    m_TurnController turnController;
+    //m_TurnController turnController;
 
     void Start () {
 
-        turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
+        //turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
         thisCamera = GetComponent<Camera>();
 		shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
 		basket = GameObject.Find("ring").GetComponent<Transform>();

@@ -23,8 +23,18 @@ public class m_Shooter : PunBehaviour {
 	private ClothSphereColliderPair[] colPair;					//Array to keep balls sphere colliders
 	private GameObject SpawnedObjects;							//A container object to keep there all spawned object. Keeps hierarchy clean.
 	private Vector3 ThrowForce;									//A vector that defines direction and power of the throw
-	private bool needBall;										//A booalen to know if we need to spawn new ball
-	private bool outOfscreen;
+	private bool needBall;                                      //A booalen to know if we need to spawn new ball
+
+
+    public string _needball {
+        get { if (needBall)
+                return "true";
+            else
+                return "false";
+           }
+    }
+
+    private bool outOfscreen;
     m_TurnController turnController;
     Vector3 mouseFinalPos;
 
@@ -45,20 +55,7 @@ public class m_Shooter : PunBehaviour {
 		colPair = new ClothSphereColliderPair[5];
         turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
     }
-
-    //****************************************************************************
-   /* void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-              
-        if (stream.isWriting) {
-            stream.SendNext(newBallPosition);
-            Debug.Log("Is Sending");
-        }
-        else {
-            Debug.Log("Is recieving");       
-            newBallPosition = (Vector3)stream.ReceiveNext();
-        }
-    }*/
-
+      
     void Update () {
 
         
@@ -82,8 +79,6 @@ public class m_Shooter : PunBehaviour {
             isPressed = false;
             if (!isBallThrown && !outOfscreen) {
                 photonView.RPC("throwBall", PhotonTargets.All, mouseStartPos, mouseFinalPos);
-                Debug.Log(mouseFinalPos);
-                //throwBall( mouseStartPos, mouseFinalPos);
                 ClearDots();
             }
             else {
@@ -170,7 +165,7 @@ public class m_Shooter : PunBehaviour {
 		randRot.eulerAngles = new Vector3(Random.Range(0,360),Random.Range(0,360),Random.Range(0,360));
 		return randRot;
 	}
-	
+    	
     [PunRPC]
     private void throwBall(Vector3 _mouseStartPos, Vector3 _mouseFinalPos) {        
 

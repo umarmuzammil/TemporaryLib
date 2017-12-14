@@ -81,6 +81,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
         
     void Goal(float distance, float height, bool floored, bool clear, bool special) {
+
+        Debug.Log("Goalaaa...........");
         comboGoals += 1;
         superBallProgress += 0.01f;
         if (!bonusAimActive) {
@@ -155,6 +157,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
 
     void Fail() {
+
+        Debug.Log("Failllll..............");
         comboGoals = comboClearGoals = comboGoals_bonusRing = comboGoals_bonusAim = comboScore = 0;
         currentBallsCount -= 1;
 
@@ -172,18 +176,19 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         xpLevel = score > 2 * xpScoreStep ? score / xpScoreStep : 1;
         UpdateBallsCount();
         UpdateSpawnCollider();
+        turnController.switchTurn();
 
         if (turnController._activeTurn == turnController._myTurn) {
             Vector3 newBallPos = GetRandomPosInCollider();
-            photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);
+            photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);            
         }
+        
     }
     
     [PunRPC]
-    IEnumerator NextRandomPos(Vector3 _newBallPos) {
+    void NextRandomPos(Vector3 _newBallPos) {
+        Debug.Log("CALLED ");
         shooter.newBallPosition = _newBallPos;
-        turnController.switchTurn();
-        yield return new WaitForEndOfFrame();
         shooter.spawnBall();
     }
         

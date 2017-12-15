@@ -6,7 +6,7 @@ using Photon;
 [RequireComponent(typeof(m_GameController))]
 public class m_ControllerMultiplayer : PunBehaviour  {
 
-    public int startBallsCount = 10;                //Balls count we start with
+    public int startBallsCount = 6;                 //Balls count we start with
     public int bonusRingClearCombo = 3;             //Count of clear goals in a row to get big rinf bonus
     public int bonusAimCombo = 5;                   //Count of goals in a row to get aim bonus
     public int bonusAimMinXpLevel = 5;              //Minimum xp level to be able get aim bonus
@@ -14,7 +14,11 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     public int bonusAimThrowsLimit = 3;             //When you get aim bonus after this count of throws it will gone 
     public int xpScoreStep = 100;					//XP step. With help of this you can tweak the speed of getting xp level.
 
-    public Text ballsCountTxt;
+    //Test SCORES MULTIPLAYERS
+    public Text LocalPlayerName;
+    public Text RemotePlayerCount;
+    public Text ballsRemoteCountTxt;
+    public Text ballsLocalCountTxt;
     public Text scoreTxt;
     public Text plusScoreTxt;
     public Text plusBallTxt;
@@ -23,12 +27,16 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     public BoxCollider spawnCollider;
 
 
+
     private GameObject ring;
     private m_Shooter shooter;
     private m_TurnController turnController;
     private AudioSource thisAudio;
 
-    private int currentBallsCount;                  //Current amount of balls left to throw
+    //multiplayer Score Variables
+    private int currentLocalBallsCount;                  //Current amount of balls left to throw
+    private int currentRemoteBallsCount;                
+
     private int score;                              //Current score
     private int comboScore;                         //Current amount of combo score. Increases when you have goals in a row. Resets when you fail a ball.
     private int comboGoals;                         //Current quantity of usual goals got in a row. Increases when you have goals in a row. Resets when you fail a ball.
@@ -62,11 +70,14 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
    
     void Start() {
+
+        
+
         ring = GameObject.Find("ring");
         turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
         shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
         thisAudio = GetComponent<AudioSource>();
-        currentBallsCount = startBallsCount;
+        currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
         ResetData();
         if (PhotonNetwork.isMasterClient) {
             RandomPos = GetRandomPosInCollider();
@@ -81,8 +92,6 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
         
     void Goal(float distance, float height, bool floored, bool clear, bool special) {
-
-        Debug.Log("Goalaaa...........");
         comboGoals += 1;
         superBallProgress += 0.01f;
         if (!bonusAimActive) {
@@ -111,7 +120,15 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         }
 
         if (clear) {
-            currentBallsCount += 1;
+
+            if (turnController._myTurn == turnController._activeTurn) {
+                if (turnController._activeTurn == m_TurnController.Turn.local) {
+                    currentLocalBallsCount += 1;
+                }
+                else {
+                    currentRemoteBallsCount += 1;
+                }
+            }
             ballIcon.ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 2);
             plusBallTxt.gameObject.SetActive(true);
             comboClearGoals += 1;
@@ -158,9 +175,16 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     void Fail() {
 
-        Debug.Log("Failllll..............");
         comboGoals = comboClearGoals = comboGoals_bonusRing = comboGoals_bonusAim = comboScore = 0;
-        currentBallsCount -= 1;
+
+        if (turnController._myTurn == turnController._activeTurn) {
+            if (turnController._activeTurn == m_TurnController.Turn.local) {
+                currentLocalBallsCount -= 1;
+            }
+            else {
+                currentRemoteBallsCount -= 1;
+            }
+        }                
 
         if (bonusAimActive) {
             bonusAimThrows += 1;
@@ -186,8 +210,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
     
     [PunRPC]
-    void NextRandomPos(Vector3 _newBallPos) {
-        Debug.Log("CALLED ");
+    void NextRandomPos(Vector3 _newBallPos) {        
         shooter.newBallPosition = _newBallPos;
         shooter.spawnBall();
     }
@@ -220,10 +243,21 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
 
     void UpdateBallsCount() {
-        ballsCountTxt.text = currentBallsCount.ToString();
-        if (currentBallsCount < 1) {
+
+        // Multiplayer Code 
+        if(turnController._myTurn == turnController._activeTurn) {
+            if(turnController._activeTurn == m_TurnController.Turn.local) {
+                ballsLocalCountTxt.text = currentLocalBallsCount.ToString();
+            }
+            else {                
+                ballsRemoteCountTxt.text = currentRemoteBallsCount.ToString();
+            }
+
+        }        
+
+        /*if (currentBallsCount < 1) {
             m_GameController.data.Complete();
-        }
+        }*/
     }  
 
     void UpdateSpawnCollider() {
@@ -235,7 +269,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
 
     public void ResetData() {
-        currentBallsCount = startBallsCount;
+        currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
         score = 0;
         xpLevel = 1; 
         UpdateBallsCount();

@@ -71,6 +71,11 @@ public class m_ControllerMultiplayer : PunBehaviour  {
    
     void Start() {
 
+<<<<<<< HEAD
+=======
+        
+
+>>>>>>> 6bd3bece2f1553abb091933b04199d230b0b7110
         ring = GameObject.Find("ring");
         turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
         shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
@@ -127,7 +132,10 @@ public class m_ControllerMultiplayer : PunBehaviour  {
                     currentRemoteBallsCount += 1;
                 }
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6bd3bece2f1553abb091933b04199d230b0b7110
             ballIcon.ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 2);
             plusBallTxt.gameObject.SetActive(true);
             comboClearGoals += 1;
@@ -200,10 +208,19 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         UpdateBallsCount();
         UpdateSpawnCollider();
         turnController.switchTurn();
+<<<<<<< HEAD
         if (turnController._activeTurn == turnController._myTurn) {
             Vector3 newBallPos = GetRandomPosInCollider();
             photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);            
         }       
+=======
+
+        if (turnController._activeTurn == turnController._myTurn) {
+            Vector3 newBallPos = GetRandomPosInCollider();
+            photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);            
+        }
+        
+>>>>>>> 6bd3bece2f1553abb091933b04199d230b0b7110
     }
     
     [PunRPC]
@@ -240,8 +257,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
 
     void UpdateBallsCount() {
-
-        // Multiplayer Code 
+        
         if(turnController._myTurn == turnController._activeTurn) {
             Debug.Log("I am Increasing my score");
             if(turnController._activeTurn == m_TurnController.Turn.local) {

@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 1694ff880d999d646a200573550164b9
+timeCreated: 1432206745
+licenseType: Store
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Movavi Grotesque
+  fontNames:
+  - Movavi Grotesque
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

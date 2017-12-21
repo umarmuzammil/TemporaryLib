@@ -120,6 +120,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
         if (clear) {
 
+            Debug.Log("The Current Turn is " + turnController._activeTurn);
+
             if (turnController._myTurn == turnController._activeTurn) {
                 if (turnController._activeTurn == m_TurnController.Turn.local) {
                     currentLocalBallsCount += 1;
@@ -178,6 +180,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     void Fail() {
 
         comboGoals = comboClearGoals = comboGoals_bonusRing = comboGoals_bonusAim = comboScore = 0;
+        Debug.Log("The Current Turn is " + turnController._activeTurn);
+
 
         if (turnController._myTurn == turnController._activeTurn) {
             if (turnController._activeTurn == m_TurnController.Turn.local) {
@@ -256,11 +260,11 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     void UpdateBallsCount() {
         
         if(turnController._myTurn == turnController._activeTurn) {
-            Debug.Log("I am Increasing my score");
-            if(turnController._activeTurn == m_TurnController.Turn.local) {
+            
+            if(turnController._activeTurn == m_TurnController.Turn.local) {                
                 ballsLocalCountTxt.text = currentLocalBallsCount.ToString();
             }
-            else {                
+            else {               
                 ballsRemoteCountTxt.text = currentRemoteBallsCount.ToString();
             }
         }        

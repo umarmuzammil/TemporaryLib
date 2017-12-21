@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Photon;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 [RequireComponent(typeof(m_GameController))]
 public class m_ControllerMultiplayer : PunBehaviour  {
@@ -53,9 +54,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     private bool hitRecord;							//Boolean that defines if we already hitted last best score or not
 
-    Vector3 RandomPos;
+    Vector3 RandomPos;   
 
-    PunPlayerScores PunPlayerScores;  
 
     void OnEnable() {
         m_Ball.OnGoal += Goal;
@@ -78,8 +78,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         thisAudio = GetComponent<AudioSource>();
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
         ResetData();
-        if (PhotonNetwork.isMasterClient) {
-            myScoreUtility.SetScore(PhotonNetwork.player, 10, 10);
+        if (PhotonNetwork.isMasterClient) {            
             RandomPos = GetRandomPosInCollider();
             photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);            
         }
@@ -99,13 +98,17 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             if (turnController._activeTurn == m_TurnController.Turn.local)
             {
                 currentLocalBallsCount += 1;
-                myScoreUtility.AddLocalScore(PhotonNetwork.player, currentLocalBallsCount);
+                Hashtable hash = new Hashtable();
+                hash.Add("local", currentLocalBallsCount);
+                PhotonNetwork.player.SetCustomProperties(hash);
             }
             else
             {
                 
                 currentRemoteBallsCount += 1;
-                myScoreUtility.AddRemoteScore(PhotonNetwork.player, currentRemoteBallsCount);                
+                Hashtable hash = new Hashtable();
+                hash.Add("remote", currentLocalBallsCount);
+                PhotonNetwork.player.SetCustomProperties(hash);
             }
 
         }
@@ -164,11 +167,15 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         if (turnController._myTurn == turnController._activeTurn) {
             if (turnController._activeTurn == m_TurnController.Turn.local) {
                 currentLocalBallsCount -= 1;
-                myScoreUtility.AddLocalScore(PhotonNetwork.player, currentLocalBallsCount);
+                Hashtable hash = new Hashtable();
+                hash.Add("local", currentLocalBallsCount);
+                PhotonNetwork.player.SetCustomProperties(hash);
             }
             else {
                 currentRemoteBallsCount -= 1;
-                myScoreUtility.AddLocalScore(PhotonNetwork.player, currentLocalBallsCount);
+                Hashtable hash = new Hashtable();
+                hash.Add("local", currentLocalBallsCount);
+                PhotonNetwork.player.SetCustomProperties(hash);
             }
         }                
 
@@ -237,8 +244,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     void UpdateBallsCount() {
 
-        ballsLocalCountTxt.text = myScoreUtility.GetLocalScore(PhotonNetwork.player).ToString();
-        ballsRemoteCountTxt.text = myScoreUtility.GetRemoteScore(PhotonNetwork.player).ToString();
+        ballsLocalCountTxt.text = ((int)PhotonNetwork.player.CustomProperties["local"]).ToString();
+        ballsRemoteCountTxt.text = ((int)PhotonNetwork.player.CustomProperties["Remote"]).ToString();
 
 
         /*if (turnController._myTurn == turnController._activeTurn) {

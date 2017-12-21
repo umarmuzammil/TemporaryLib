@@ -20,7 +20,7 @@ public static class ScoreExtensions
 
     public static void AddScore(this PhotonPlayer player, int scoreToAddToCurrent)
     {
-        int current = player.GetScore();
+        int current = player.GetBasketScore();
         current = current + scoreToAddToCurrent;
 
         Hashtable score = new Hashtable();  // using PUN's implementation of Hashtable
@@ -29,7 +29,7 @@ public static class ScoreExtensions
         player.SetCustomProperties(score);  // this locally sets the score and will sync it in-game asap.
     }
 
-    public static int GetScore(this PhotonPlayer player)
+    public static int GetBasketScore(this PhotonPlayer player)
     {
         object score;
         if (player.CustomProperties.TryGetValue(PunPlayerScores.PlayerScoreProp, out score))

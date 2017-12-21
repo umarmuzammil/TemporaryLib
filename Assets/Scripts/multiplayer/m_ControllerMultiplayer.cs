@@ -55,6 +55,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     Vector3 RandomPos;
 
+    PunPlayerScores PunPlayerScores;  
+
     void OnEnable() {
         m_Ball.OnGoal += Goal;
         m_Ball.OnFail += Fail;
@@ -69,8 +71,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         m_Shooter.aimDotsNum = 60;
     }
    
-    void Start() {
-
+    void Start() {        
         ring = GameObject.Find("ring");
         turnController = GameObject.Find("TurnController").GetComponent<m_TurnController>();
         shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
@@ -78,6 +79,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
         ResetData();
         if (PhotonNetwork.isMasterClient) {
+            myScoreUtility.SetScore(PhotonNetwork.player, 10, 10);
             RandomPos = GetRandomPosInCollider();
             photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);            
         }
@@ -90,48 +92,25 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
         
     void Goal(float distance, float height, bool floored, bool clear, bool special) {
-        /*
-        comboGoals += 1;
-        superBallProgress += 0.01f;
-        if (!bonusAimActive) {
-            if (xpLevel > bonusAimMinXpLevel)
-                comboGoals_bonusAim += 1;
-            if (comboGoals_bonusAim == bonusAimCombo) {
-                bonusAimActive = true;
-                plusDotsTxt.gameObject.SetActive(true);
-                thisAudio.PlayOneShot(SoundController.data.bonusOpen);
+
+
+        if (turnController._myTurn == turnController._activeTurn)
+        {
+            if (turnController._activeTurn == m_TurnController.Turn.local)
+            {
+                currentLocalBallsCount += 1;
+                myScoreUtility.AddLocalScore(PhotonNetwork.player, currentLocalBallsCount);
             }
-        }
-        else {
-            bonusAimThrows += 1;
-            if (bonusAimThrows == bonusAimThrowsLimit) {
-                bonusAimThrows = comboGoals_bonusAim = 0;
-                bonusAimActive = false;
+            else
+            {
+                
+                currentRemoteBallsCount += 1;
+                myScoreUtility.AddRemoteScore(PhotonNetwork.player, currentRemoteBallsCount);                
             }
+
         }
 
-        if (bonusRingActive) {
-            bonusRingThrows += 1;
-            if (bonusRingThrows == bonusRingThrowsLimit) {
-                comboGoals_bonusRing = 0;
-                StartCoroutine(ResetRing());
-            }
-        }*/
-
-        if (clear) {
-
-            Debug.Log("The Current Turn is " + turnController._activeTurn);
-
-            if (turnController._myTurn == turnController._activeTurn) {
-                if (turnController._activeTurn == m_TurnController.Turn.local) {
-                    currentLocalBallsCount += 1;
-                    Debug.Log(turnController._myTurn + ":::::::" + currentLocalBallsCount.ToString());
-                }
-                else {
-                    currentRemoteBallsCount += 1;
-                    Debug.Log(turnController._myTurn + ":::::::" + currentRemoteBallsCount.ToString());
-                }
-            }
+        if (clear) {   
 
             ballIcon.ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 2);
             plusBallTxt.gameObject.SetActive(true);
@@ -180,17 +159,16 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     void Fail() {
 
         comboGoals = comboClearGoals = comboGoals_bonusRing = comboGoals_bonusAim = comboScore = 0;
-        Debug.Log("The Current Turn is " + turnController._activeTurn);
 
 
         if (turnController._myTurn == turnController._activeTurn) {
             if (turnController._activeTurn == m_TurnController.Turn.local) {
                 currentLocalBallsCount -= 1;
-                Debug.Log(turnController._myTurn + ":::::::" + currentLocalBallsCount.ToString());
+                myScoreUtility.AddLocalScore(PhotonNetwork.player, currentLocalBallsCount);
             }
             else {
                 currentRemoteBallsCount -= 1;
-                Debug.Log(turnController._myTurn + ":::::::" + currentLocalBallsCount.ToString());
+                myScoreUtility.AddLocalScore(PhotonNetwork.player, currentLocalBallsCount);
             }
         }                
 
@@ -258,16 +236,20 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
 
     void UpdateBallsCount() {
-        
-        if(turnController._myTurn == turnController._activeTurn) {
+
+        ballsLocalCountTxt.text = myScoreUtility.GetLocalScore(PhotonNetwork.player).ToString();
+        ballsRemoteCountTxt.text = myScoreUtility.GetRemoteScore(PhotonNetwork.player).ToString();
+
+
+        /*if (turnController._myTurn == turnController._activeTurn) {
             
             if(turnController._activeTurn == m_TurnController.Turn.local) {                
                 ballsLocalCountTxt.text = currentLocalBallsCount.ToString();
             }
-            else {               
+            else {
                 ballsRemoteCountTxt.text = currentRemoteBallsCount.ToString();
             }
-        }        
+        }*/
 
         /*if (currentBallsCount < 1) {
             m_GameController.data.Complete();

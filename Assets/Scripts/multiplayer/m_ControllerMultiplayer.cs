@@ -54,7 +54,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     private bool hitRecord;							//Boolean that defines if we already hitted last best score or not
 
-    Vector3 RandomPos;   
+    Vector3 RandomPos;
+    Hashtable hash = new Hashtable();
 
 
     void OnEnable() {
@@ -77,7 +78,15 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         shooter = GameObject.Find("Shooter").GetComponent<m_Shooter>();
         thisAudio = GetComponent<AudioSource>();
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
+
+        //customRoomProperties
+        
+        hash.Add("score", startBallsCount);
+        PhotonNetwork.SetPlayerCustomProperties(hash);
+        
+
         ResetData();
+
         if (PhotonNetwork.isMasterClient) {            
             RandomPos = GetRandomPosInCollider();
             photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);            
@@ -98,16 +107,14 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             if (turnController._activeTurn == m_TurnController.Turn.local)
             {
                 currentLocalBallsCount += 1;
-                Hashtable hash = new Hashtable();
-                hash.Add("local", currentLocalBallsCount);
+                PhotonNetwork.player.CustomProperties["score"] = currentLocalBallsCount;
                 PhotonNetwork.player.SetCustomProperties(hash);
             }
             else
             {
                 
                 currentRemoteBallsCount += 1;
-                Hashtable hash = new Hashtable();
-                hash.Add("remote", currentLocalBallsCount);
+                PhotonNetwork.player.CustomProperties["score"] = currentRemoteBallsCount;
                 PhotonNetwork.player.SetCustomProperties(hash);
             }
 
@@ -164,28 +171,24 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         comboGoals = comboClearGoals = comboGoals_bonusRing = comboGoals_bonusAim = comboScore = 0;
 
 
-        if (turnController._myTurn == turnController._activeTurn) {
-            if (turnController._activeTurn == m_TurnController.Turn.local) {
+        if (turnController._myTurn == turnController._activeTurn)
+        {
+            if (turnController._activeTurn == m_TurnController.Turn.local)
+            {
                 currentLocalBallsCount -= 1;
-                Hashtable hash = new Hashtable();
-                hash.Add("local", currentLocalBallsCount);
+                PhotonNetwork.player.CustomProperties["score"] = currentLocalBallsCount;
                 PhotonNetwork.player.SetCustomProperties(hash);
             }
-            else {
+            else
+            {
                 currentRemoteBallsCount -= 1;
-                Hashtable hash = new Hashtable();
-                hash.Add("local", currentLocalBallsCount);
+                PhotonNetwork.player.CustomProperties["score"] = currentRemoteBallsCount;
                 PhotonNetwork.player.SetCustomProperties(hash);
             }
-        }                
 
-        if (bonusAimActive) {
-            bonusAimThrows += 1;
-            if (bonusAimThrows == bonusAimThrowsLimit) {
-                bonusAimThrows = comboGoals_bonusAim = 0;
-                bonusAimActive = false;
-            }
-        }               
+        }
+
+                   
         BallCompleted();
     }
 
@@ -244,9 +247,17 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     void UpdateBallsCount() {
 
-        ballsLocalCountTxt.text = ((int)PhotonNetwork.player.CustomProperties["local"]).ToString();
-        ballsRemoteCountTxt.text = ((int)PhotonNetwork.player.CustomProperties["Remote"]).ToString();
-
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+        {
+            if (p.IsMasterClient)
+            {
+                ballsLocalCountTxt.text = (string)p.CustomProperties["score"];
+            }
+           else
+            {
+                ballsRemoteCountTxt.text = (string)p.CustomProperties["score"];
+            }
+        }
 
         /*if (turnController._myTurn == turnController._activeTurn) {
             

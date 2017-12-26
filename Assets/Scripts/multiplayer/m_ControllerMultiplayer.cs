@@ -225,12 +225,12 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
             if (PhotonNetwork.isMasterClient) {
                 Debug.Log("I am master client");
-                ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
+                ballsLocalCountTxt.text = (string)PhotonNetwork.playerList[i].CustomProperties["score"];
             }
 
             if (!PhotonNetwork.isMasterClient) {
                 Debug.Log("I am not master client");
-                ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
+                ballsRemoteCountTxt.text = (string)PhotonNetwork.playerList[i].CustomProperties["score"];
             }
         }
         

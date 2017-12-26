@@ -39,17 +39,6 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     private int currentRemoteBallsCount;                
 
     private int score;                              //Current score
-    private int comboScore;                         //Current amount of combo score. Increases when you have goals in a row. Resets when you fail a ball.
-    private int comboGoals;                         //Current quantity of usual goals got in a row. Increases when you have goals in a row. Resets when you fail a ball.
-    private int comboClearGoals;                    //Current quantity of clear goals got in a row. Increases when you have clear goals in a row. Resets when you fail a ball.
-    private int comboGoals_bonusRing;               //Current quantity of clear goals got in a row to open ring bonus. Increases when you have clear goals in a row. Resets when you fail a ball.
-    private bool bonusRingActive;                   //Boolean to determine if ring bonus currently active or not
-    private int bonusRingThrows;                    //Current quantity of balls thrown during ring bonus active
-    private int comboGoals_bonusAim;                //Current quantity of goals got in a row to open aim bonus. Increases when you have goals in a row. Resets when you fail a ball.
-    private bool bonusAimActive;                    //Boolean to determine if aim bonus currently active or not
-    private int bonusAimThrows;                     //Current quantity of balls thrown during aim bonus active or not
-    private bool bonusSuperBallActive;              //Boolean to determine if superball bonus active or not
-    private float superBallProgress;                //Float that keeps current superball progress value
     private int xpLevel;                            //Int that defines current XP level 
 
     private bool hitRecord;							//Boolean that defines if we already hitted last best score or not
@@ -124,52 +113,37 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
             ballIcon.ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 2);
             plusBallTxt.gameObject.SetActive(true);
-            comboClearGoals += 1;
 
-            if (!bonusRingActive) {
-                comboGoals_bonusRing += 1;
-                if (comboGoals_bonusRing == bonusRingClearCombo) {
-                    StartCoroutine(GrowRing());
-                }
-            }
+            
 
             if (special)
                 SoundController.data.playClearSpecialGoal();
             else
                 SoundController.data.playClearGoal();
-            superBallProgress += 0.01f;
-        }
-        else {
-            SoundController.data.playGoal();
-            comboClearGoals = comboGoals_bonusRing = 0;
+            
         }
 
-        comboScore += (int)distance;
-        plusScoreTxt.text = "+" + comboScore.ToString("F0");
+        else {
+            SoundController.data.playGoal();
+        }
+
 
         if (special) {
             int heightScore = (int)height;
-            comboScore += heightScore;
-            plusScoreTxt.text += "\n+" + heightScore.ToString("F0");
-            superBallProgress += 0.01f;
+            plusScoreTxt.text += "\n+" + heightScore.ToString("F0");          
         }
 
         if (floored) {
             int flooredScore = (int)distance * 2;
-            plusScoreTxt.text += "+" + flooredScore.ToString("F0");
-            superBallProgress += 0.01f;               
+            plusScoreTxt.text += "+" + flooredScore.ToString("F0");                     
         }
 
         plusScoreTxt.gameObject.SetActive(true);
         scoreTxt.gameObject.GetComponent<Transformer>().ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 1);
-        AddScore(comboScore);
         BallCompleted();
     }
 
     void Fail() {
-
-        comboGoals = comboClearGoals = comboGoals_bonusRing = comboGoals_bonusAim = comboScore = 0;
-
 
         if (turnController._myTurn == turnController._activeTurn)
         {
@@ -221,7 +195,6 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     IEnumerator GrowRing() {
         yield return new WaitForSeconds(0.5f);
-        bonusRingActive = true;
         ring.SetActive(false);
         ring.transform.localPosition = new Vector3(1.9f, 9.51f, 0);
         ring.transform.localScale = new Vector3(2, 2, 2);
@@ -231,12 +204,10 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     IEnumerator ResetRing() {
         yield return new WaitForSeconds(0.5f);
-        bonusRingActive = false;
         ring.SetActive(false);
         ring.transform.localPosition = new Vector3(1.2f, 9.51f, 0);
         ring.transform.localScale = new Vector3(1, 1, 1);
         ring.SetActive(true);
-        bonusRingThrows = 0;
     }
 
     public void AddScore(int score) {

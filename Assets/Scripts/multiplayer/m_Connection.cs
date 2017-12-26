@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon;
+using UnityEngine.UI;
+
 namespace com.Basket.Graystork {
 
     public class m_Connection : PunBehaviour {
@@ -16,15 +18,33 @@ namespace com.Basket.Graystork {
         public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
         public byte MaxPlayersPerRoom = 2;
 
+
+     
+        static string playerNamePrefKey = "PlayerName";
+        public InputField _inputField;
+
         private void Start() {
+
+            string defaultName = "";
+            if (_inputField != null) {
+                if (PlayerPrefs.HasKey(playerNamePrefKey)) {
+                    defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+                    _inputField.text = defaultName;
+                }
+            }
+
+            PhotonNetwork.playerName = defaultName;
             PhotonNetwork.autoJoinLobby = false;
             PhotonNetwork.automaticallySyncScene = true;
   
         }
 
-        private void Update() {           
 
+        public void SetPlayerName(string value) {
+            PhotonNetwork.playerName = value + " ";
+            PlayerPrefs.SetString(playerNamePrefKey, value);
         }
+    
         private void Awake() {
             PhotonNetwork.logLevel = Loglevel;
         }

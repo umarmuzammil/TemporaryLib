@@ -249,13 +249,15 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
         foreach (PhotonPlayer p in PhotonNetwork.playerList)
         {
-            if (p.IsMasterClient)
+            if (PhotonNetwork.isMasterClient)
             {
+                Debug.Log("I am master client");
                 ballsLocalCountTxt.text = p.CustomProperties["score"].ToString();
             }
 
-            if (!p.IsMasterClient)
+            if (!PhotonNetwork.isMasterClient)
             {
+                Debug.Log("I am not master client");
                 ballsRemoteCountTxt.text = p.CustomProperties["score"].ToString();
             }
 
@@ -278,7 +280,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
         score = 0;
         xpLevel = 1; 
-        //UpdateBallsCount();
+        UpdateBallsCount();
         UpdateSpawnCollider();
         scoreTxt.text = score.ToString();
     }

@@ -68,7 +68,6 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         thisAudio = GetComponent<AudioSource>();
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
 
-        transform.GetComponent<PhotonView>().viewID = Random.Range(0, 10);
         //customRoomProperties
         
         //hash.Add("score", startBallsCount);
@@ -101,8 +100,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             else
             {
                 
-                currentRemoteBallsCount += 1;
-                PhotonNetwork.player.CustomProperties["score"] = currentRemoteBallsCount;
+                currentRemoteBallsCount += 1;       
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
             }
 
@@ -154,7 +152,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             else
             {
                 currentRemoteBallsCount -= 1;
-                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
+                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
             }
 
         }
@@ -172,14 +170,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         if (turnController._activeTurn == turnController._myTurn) {
             Vector3 newBallPos = GetRandomPosInCollider();
             photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);            
-        }       
-
-
-        if (turnController._activeTurn == turnController._myTurn) {
-            Vector3 newBallPos = GetRandomPosInCollider();
-            photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);            
         }
-        
 
     }
     
@@ -218,13 +209,11 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
 
             Debug.Log(PhotonNetwork.playerList[i].NickName);
-            //Debug.Log(PhotonNetwork.playerList[i].CustomProperties["score"].ToString());
 
-            if (PhotonNetwork.isMasterClient) {
+            if (PhotonNetwork.playerList[i].IsMasterClient) {
                 ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
-
-            if (!PhotonNetwork.isMasterClient) {
+            else {
                 ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
         }

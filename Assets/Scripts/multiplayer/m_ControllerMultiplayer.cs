@@ -83,7 +83,6 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         
         hash.Add("score", startBallsCount);
         PhotonNetwork.SetPlayerCustomProperties(hash);
-        Debug.Log(PhotonNetwork.player.CustomProperties["score"].ToString());
 
         ResetData();
 
@@ -249,15 +248,18 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
         foreach (PhotonPlayer p in PhotonNetwork.playerList)
         {
+            Debug.Log(p.CustomProperties["score"].ToString());
+
             if (PhotonNetwork.isMasterClient)
             {
-                Debug.Log("I am master client");
+                Debug.Log("I am master client");               
                 ballsLocalCountTxt.text = p.CustomProperties["score"].ToString();
             }
 
             if (!PhotonNetwork.isMasterClient)
             {
                 Debug.Log("I am not master client");
+                //Debug.Log(PhotonNetwork.player.CustomProperties["score"].ToString());
                 ballsRemoteCountTxt.text = p.CustomProperties["score"].ToString();
             }
 

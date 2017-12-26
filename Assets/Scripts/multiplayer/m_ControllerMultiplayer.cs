@@ -79,6 +79,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         thisAudio = GetComponent<AudioSource>();
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
 
+        transform.GetComponent<PhotonView>().viewID = Random.Range(0, 10);
         //customRoomProperties
         
         hash.Add("score", startBallsCount);

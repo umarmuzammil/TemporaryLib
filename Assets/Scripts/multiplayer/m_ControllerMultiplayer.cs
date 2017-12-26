@@ -83,7 +83,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         
         hash.Add("score", startBallsCount);
         PhotonNetwork.SetPlayerCustomProperties(hash);
-        
+        Debug.Log(PhotonNetwork.player.CustomProperties["score"].ToString());
 
         ResetData();
 
@@ -251,23 +251,15 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         {
             if (p.IsMasterClient)
             {
-                ballsLocalCountTxt.text = (string)p.CustomProperties["score"];
+                ballsLocalCountTxt.text = p.CustomProperties["score"].ToString();
             }
-           else
-            {
-                ballsRemoteCountTxt.text = (string)p.CustomProperties["score"];
-            }
-        }
 
-        /*if (turnController._myTurn == turnController._activeTurn) {
-            
-            if(turnController._activeTurn == m_TurnController.Turn.local) {                
-                ballsLocalCountTxt.text = currentLocalBallsCount.ToString();
+            if (!p.IsMasterClient)
+            {
+                ballsRemoteCountTxt.text = p.CustomProperties["score"].ToString();
             }
-            else {
-                ballsRemoteCountTxt.text = currentRemoteBallsCount.ToString();
-            }
-        }*/
+
+        }
 
         /*if (currentBallsCount < 1) {
             m_GameController.data.Complete();
@@ -286,7 +278,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
         score = 0;
         xpLevel = 1; 
-        UpdateBallsCount();
+        //UpdateBallsCount();
         UpdateSpawnCollider();
         scoreTxt.text = score.ToString();
     }

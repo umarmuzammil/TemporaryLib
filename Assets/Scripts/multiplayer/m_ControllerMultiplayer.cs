@@ -221,11 +221,11 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             //Debug.Log(PhotonNetwork.playerList[i].CustomProperties["score"].ToString());
 
             if (PhotonNetwork.isMasterClient) {
-                ballsLocalCountTxt.text = (string)PhotonNetwork.playerList[i].CustomProperties["score"];
+                ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
 
             if (!PhotonNetwork.isMasterClient) {
-                ballsRemoteCountTxt.text = (string)PhotonNetwork.playerList[i].CustomProperties["score"];
+                ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
         }
         

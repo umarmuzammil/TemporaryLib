@@ -19,6 +19,7 @@ namespace com.Basket.Graystork {
         private void Start() {
             PhotonNetwork.autoJoinLobby = false;
             PhotonNetwork.automaticallySyncScene = true;
+  
         }
 
         private void Update() {           
@@ -84,6 +85,7 @@ namespace com.Basket.Graystork {
 
         [PunRPC]
         void Loadlevel() {
+            PhotonNetwork.AllocateViewID();
             PhotonNetwork.LoadLevel("MultiplayerGameScene");
         }
     }

@@ -77,15 +77,14 @@ namespace com.Basket.Graystork {
                 
         public override void OnJoinedRoom() {
             Debug.Log("I Joined the room");  //Join Room Stuff Goes Here.
-            
-            if(PhotonNetwork.room.PlayerCount == 2 ) {
+            PhotonNetwork.AllocateViewID();
+            if (PhotonNetwork.room.PlayerCount == 2 ) {
                 photonView.RPC("Loadlevel", PhotonTargets.All, null);
             }
         }
 
         [PunRPC]
-        void Loadlevel() {
-            PhotonNetwork.AllocateViewID();
+        void Loadlevel() {            
             PhotonNetwork.LoadLevel("MultiplayerGameScene");
         }
     }

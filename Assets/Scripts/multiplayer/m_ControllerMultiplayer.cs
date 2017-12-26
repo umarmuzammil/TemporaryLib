@@ -218,24 +218,22 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     void UpdateBallsCount() {
 
-        foreach (PhotonPlayer p in PhotonNetwork.playerList)
-        {
-            Debug.Log(p.CustomProperties["score"].ToString());
+        for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
 
-            if (PhotonNetwork.isMasterClient)
-            {
-                Debug.Log("I am master client");               
-                ballsLocalCountTxt.text = p.CustomProperties["score"].ToString();
+            Debug.Log(PhotonNetwork.playerList[i].NickName);
+            //Debug.Log(PhotonNetwork.playerList[i].CustomProperties["score"].ToString());
+
+            if (PhotonNetwork.isMasterClient) {
+                Debug.Log("I am master client");
+                ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
 
-            if (!PhotonNetwork.isMasterClient)
-            {
+            if (!PhotonNetwork.isMasterClient) {
                 Debug.Log("I am not master client");
-                //Debug.Log(PhotonNetwork.player.CustomProperties["score"].ToString());
-                ballsRemoteCountTxt.text = p.CustomProperties["score"].ToString();
+                ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
-
         }
+        
 
         /*if (currentBallsCount < 1) {
             m_GameController.data.Complete();
@@ -251,6 +249,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
 
     public void ResetData() {
+
         currentLocalBallsCount = currentRemoteBallsCount = startBallsCount;
         score = 0;
         xpLevel = 1; 

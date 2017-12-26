@@ -44,7 +44,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     private bool hitRecord;							//Boolean that defines if we already hitted last best score or not
 
     Vector3 RandomPos;
-    Hashtable hash = new Hashtable();
+    //Hashtable hash = new Hashtable();
 
 
     void OnEnable() {
@@ -71,8 +71,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         transform.GetComponent<PhotonView>().viewID = Random.Range(0, 10);
         //customRoomProperties
         
-        hash.Add("score", startBallsCount);
-        PhotonNetwork.SetPlayerCustomProperties(hash);
+        //hash.Add("score", startBallsCount);
+        //PhotonNetwork.SetPlayerCustomProperties(hash);
 
         ResetData();
 
@@ -95,16 +95,15 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         {
             if (turnController._activeTurn == m_TurnController.Turn.local)
             {
-                currentLocalBallsCount += 1;
-                PhotonNetwork.player.CustomProperties["score"] = currentLocalBallsCount;
-                PhotonNetwork.player.SetCustomProperties(hash);
+                currentLocalBallsCount += 1;                
+                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
             }
             else
             {
                 
                 currentRemoteBallsCount += 1;
                 PhotonNetwork.player.CustomProperties["score"] = currentRemoteBallsCount;
-                PhotonNetwork.player.SetCustomProperties(hash);
+                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
             }
 
         }
@@ -150,14 +149,12 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             if (turnController._activeTurn == m_TurnController.Turn.local)
             {
                 currentLocalBallsCount -= 1;
-                PhotonNetwork.player.CustomProperties["score"] = currentLocalBallsCount;
-                PhotonNetwork.player.SetCustomProperties(hash);
+                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
             }
             else
             {
                 currentRemoteBallsCount -= 1;
-                PhotonNetwork.player.CustomProperties["score"] = currentRemoteBallsCount;
-                PhotonNetwork.player.SetCustomProperties(hash);
+                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
             }
 
         }
@@ -224,12 +221,10 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             //Debug.Log(PhotonNetwork.playerList[i].CustomProperties["score"].ToString());
 
             if (PhotonNetwork.isMasterClient) {
-                Debug.Log("I am master client");
                 ballsLocalCountTxt.text = (string)PhotonNetwork.playerList[i].CustomProperties["score"];
             }
 
             if (!PhotonNetwork.isMasterClient) {
-                Debug.Log("I am not master client");
                 ballsRemoteCountTxt.text = (string)PhotonNetwork.playerList[i].CustomProperties["score"];
             }
         }

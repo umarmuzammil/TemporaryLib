@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon;
 using UnityEngine.UI;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 
 namespace com.Basket.Graystork {
 
@@ -17,8 +19,6 @@ namespace com.Basket.Graystork {
         string _gameVersion = "1";
         public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
         public byte MaxPlayersPerRoom = 2;
-
-
      
         static string playerNamePrefKey = "PlayerName";
         public InputField _inputField;
@@ -87,7 +87,6 @@ namespace com.Basket.Graystork {
         }*/ //test callBack
 
         public override void OnPhotonRandomJoinFailed(object[] codeAndMsg) {
-            Debug.Log("creating Room");
             PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = MaxPlayersPerRoom }, null);
         }
         public override void OnPhotonJoinRoomFailed(object[] codeAndMsg) {
@@ -96,7 +95,9 @@ namespace com.Basket.Graystork {
         }
                 
         public override void OnJoinedRoom() {
-            Debug.Log("I Joined the room");  //Join Room Stuff Goes Here.
+            Debug.Log("Connecting");  //Join Room Stuff Goes Here.
+
+            PhotonNetwork.SetPlayerCustomProperties(new Hashtable { { "score", 6} });
             if (PhotonNetwork.room.PlayerCount == 2 ) {
                 photonView.RPC("Loadlevel", PhotonTargets.All, null);
             }

@@ -110,19 +110,23 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             if (turnController._activeTurn == m_TurnController.Turn.local)
             {
                 currentLocalBallsCount += 1;
-                Debug.Log("Local Goal Added");
 
-            if(PhotonNetwork.player.IsMasterClient)
-                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
+                if (PhotonNetwork.player.IsMasterClient)
+                {
+                    PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
+                    Debug.Log("Local Goal Added");
+                }
 
             }
             else
             {
                 currentRemoteBallsCount += 1;
-                Debug.Log("Remote Goal Added");
 
-            if (!PhotonNetwork.player.IsMasterClient)
-                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
+                if (!PhotonNetwork.player.IsMasterClient)
+                {
+                    PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
+                    Debug.Log("Local Goal Added");
+                }
 
             }
             
@@ -164,13 +168,20 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         {
             currentLocalBallsCount -= 1;
             if (PhotonNetwork.player.IsMasterClient)
+            {
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
+                Debug.Log("Local Goal Removed");
+            }
+
         }
         else
         {
             currentRemoteBallsCount -= 1;
             if (!PhotonNetwork.player.IsMasterClient)
+            {
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
+                Debug.Log("Local Goal Removed");
+            }
         }
                    
         BallCompleted();

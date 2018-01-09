@@ -163,12 +163,14 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         if (turnController._activeTurn == m_TurnController.Turn.local)
         {
             currentLocalBallsCount -= 1;
-            PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
+            if (PhotonNetwork.player.IsMasterClient)
+                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
         }
         else
         {
             currentRemoteBallsCount -= 1;
-            PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
+            if (!PhotonNetwork.player.IsMasterClient)
+                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
         }
                    
         BallCompleted();
@@ -221,12 +223,9 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
 
             if (PhotonNetwork.playerList[i].IsMasterClient) {
-
-                Debug.Log("local Update");
                 ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
             else {
-                Debug.Log("Remote Update");
                 ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
 

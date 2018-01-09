@@ -110,13 +110,14 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             if (turnController._activeTurn == m_TurnController.Turn.local)
             {
                 currentLocalBallsCount += 1;
+                Debug.Log("Local Goal Added");
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
             }
             else
             {
                 currentRemoteBallsCount += 1;
+                Debug.Log("Remote Goal Added");
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
-
             }
             
         if (clear) {   

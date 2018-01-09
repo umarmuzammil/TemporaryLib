@@ -84,6 +84,20 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         }
     }
 
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.isWriting)
+        {
+            stream.SendNext(currentLocalBallsCount);
+            stream.SendNext(currentRemoteBallsCount+);
+        }
+        else
+        {            
+            currentLocalBallsCount = (int)stream.ReceiveNext();
+            currentRemoteBallsCount = (int)stream.ReceiveNext();
+        }
+    }
+
     void FetchPlayerNames()
     {
         for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
@@ -172,7 +186,6 @@ public class m_ControllerMultiplayer : PunBehaviour  {
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
                 Debug.Log("Local Goal Removed");
             }
-
         }
         else
         {
@@ -231,24 +244,24 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
     void UpdateBallsCount() {
 
-        for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
+        /*for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
 
-            if (PhotonNetwork.playerList[i].IsMasterClient) {
-                Debug.Log("is master Client");
+            if (PhotonNetwork.playerList[i].IsMasterClient) {                
                 ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
             else {
                 ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
 
-            //turnController._activeTurn == m_TurnController.Turn.local
-
-
         }
-
-        /*if (currentBallsCount < 1) {
+        if (currentBallsCount < 1) {
             m_GameController.data.Complete();
         }*/
+
+
+        ballsLocalCountTxt.text = currentLocalBallsCount.ToString();
+        ballsRemoteCountTxt.text = currentRemoteBallsCount.ToString();
+
     }  
 
     void UpdateSpawnCollider() {

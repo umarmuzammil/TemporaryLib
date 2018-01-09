@@ -16,8 +16,8 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     public int xpScoreStep = 100;					//XP step. With help of this you can tweak the speed of getting xp level.
 
     //Test SCORES MULTIPLAYERS
-    public Text LocalPlayerName;
-    public Text RemotePlayerCount;
+    public Text localPlayerName;
+    public Text remotePlayerName;
     public Text ballsRemoteCountTxt;
     public Text ballsLocalCountTxt;
     public Text scoreTxt;
@@ -44,6 +44,7 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     private bool hitRecord;							//Boolean that defines if we already hitted last best score or not
 
     Vector3 RandomPos;
+    private bool isGoal; 
     //Hashtable hash = new Hashtable();
 
 
@@ -74,10 +75,27 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         //PhotonNetwork.SetPlayerCustomProperties(hash);
 
         ResetData();
+        FetchPlayerNames();
+
 
         if (PhotonNetwork.isMasterClient) {            
             RandomPos = GetRandomPosInCollider();
             photonView.RPC("AssignRandomValue", PhotonTargets.All, RandomPos);            
+        }
+    }
+
+    void FetchPlayerNames()
+    {
+        for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
+        {
+            if (PhotonNetwork.playerList[i].IsMasterClient)
+            {
+                localPlayerName.text = PhotonNetwork.playerList[i].NickName;
+            }
+            else
+            {
+                remotePlayerName.text = PhotonNetwork.playerList[i].NickName;
+            }
         }
     }
 
@@ -86,32 +104,25 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         shooter.newBallPosition = _RandomPos;
         m_GameController.data.StartPlay();
     }
-        
+  
     void Goal(float distance, float height, bool floored, bool clear, bool special) {
 
-
-        if (turnController._myTurn == turnController._activeTurn)
-        {
             if (turnController._activeTurn == m_TurnController.Turn.local)
             {
-                currentLocalBallsCount += 1;                
+                currentLocalBallsCount += 1;
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
             }
             else
             {
-                
-                currentRemoteBallsCount += 1;       
+                currentRemoteBallsCount += 1;
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
+
             }
-
-        }
-
+            
         if (clear) {   
 
             ballIcon.ScaleImpulse(new Vector3(1.3f, 1.3f, 1), 0.4f, 2);
             plusBallTxt.gameObject.SetActive(true);
-
-            
 
             if (special)
                 SoundController.data.playClearSpecialGoal();
@@ -141,22 +152,17 @@ public class m_ControllerMultiplayer : PunBehaviour  {
     }
 
     void Fail() {
-
-        if (turnController._myTurn == turnController._activeTurn)
+           
+        if (turnController._activeTurn == m_TurnController.Turn.local)
         {
-            if (turnController._activeTurn == m_TurnController.Turn.local)
-            {
-                currentLocalBallsCount -= 1;
-                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
-            }
-            else
-            {
-                currentRemoteBallsCount -= 1;
-                PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
-            }
-
+            currentLocalBallsCount -= 1;
+            PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
         }
-
+        else
+        {
+            currentRemoteBallsCount -= 1;
+            PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
+        }
                    
         BallCompleted();
     }

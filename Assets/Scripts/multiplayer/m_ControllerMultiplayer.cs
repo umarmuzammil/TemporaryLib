@@ -84,19 +84,19 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         }
     }
 
-    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    /*void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
         {
             stream.SendNext(currentLocalBallsCount);
-            stream.SendNext(currentRemoteBallsCount+);
+            stream.SendNext(currentRemoteBallsCount);
         }
         else
-        {            
+        {
             currentLocalBallsCount = (int)stream.ReceiveNext();
             currentRemoteBallsCount = (int)stream.ReceiveNext();
         }
-    }
+    }*/
 
     void FetchPlayerNames()
     {
@@ -125,22 +125,22 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             {
                 currentLocalBallsCount += 1;
 
-                if (PhotonNetwork.player.IsMasterClient)
+                /*if (PhotonNetwork.player.IsMasterClient)
                 {
                     PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
                     Debug.Log("Local Goal Added");
-                }
+                }*/
 
             }
             else
             {
                 currentRemoteBallsCount += 1;
 
-                if (!PhotonNetwork.player.IsMasterClient)
+                /*if (!PhotonNetwork.player.IsMasterClient)
                 {
                     PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
                     Debug.Log("Remote Goal Added");
-                }
+                }*/
 
             }
             
@@ -181,20 +181,20 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         if (turnController._activeTurn == m_TurnController.Turn.local)
         {
             currentLocalBallsCount -= 1;
-            if (PhotonNetwork.player.IsMasterClient)
+            /*if (PhotonNetwork.player.IsMasterClient)
             {
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
                 Debug.Log("Local Goal Removed");
-            }
+            }*/
         }
         else
         {
             currentRemoteBallsCount -= 1;
-            if (!PhotonNetwork.player.IsMasterClient)
+            /*if (!PhotonNetwork.player.IsMasterClient)
             {
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
                 Debug.Log("Remote Goal Removed");
-            }
+            }*/
         }
                    
         BallCompleted();

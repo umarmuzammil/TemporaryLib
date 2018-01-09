@@ -111,13 +111,19 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             {
                 currentLocalBallsCount += 1;
                 Debug.Log("Local Goal Added");
+
+            if(PhotonNetwork.player.IsMasterClient)
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentLocalBallsCount } });
+
             }
             else
             {
                 currentRemoteBallsCount += 1;
                 Debug.Log("Remote Goal Added");
+
+            if (!PhotonNetwork.player.IsMasterClient)
                 PhotonNetwork.player.SetCustomProperties(new Hashtable { { "score", currentRemoteBallsCount } });
+
             }
             
         if (clear) {   
@@ -215,9 +221,12 @@ public class m_ControllerMultiplayer : PunBehaviour  {
         for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
 
             if (PhotonNetwork.playerList[i].IsMasterClient) {
+
+                Debug.Log("local Update");
                 ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
             else {
+                Debug.Log("Remote Update");
                 ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
 

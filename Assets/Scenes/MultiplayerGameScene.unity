@@ -1726,8 +1726,8 @@ MonoBehaviour:
   bonusRingThrowsLimit: 3
   bonusAimThrowsLimit: 3
   xpScoreStep: 100
-  LocalPlayerName: {fileID: 986970142}
-  RemotePlayerCount: {fileID: 1494736478}
+  localPlayerName: {fileID: 986970142}
+  remotePlayerName: {fileID: 1494736478}
   ballsRemoteCountTxt: {fileID: 139390055}
   ballsLocalCountTxt: {fileID: 2030201929}
   scoreTxt: {fileID: 553794455}

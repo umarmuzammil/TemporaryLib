@@ -177,7 +177,6 @@ public class m_ControllerMultiplayer : PunBehaviour  {
             Vector3 newBallPos = GetRandomPosInCollider();
             photonView.RPC("NextRandomPos", PhotonTargets.All, newBallPos);            
         }
-
     }
     
     [PunRPC]
@@ -214,16 +213,17 @@ public class m_ControllerMultiplayer : PunBehaviour  {
 
         for (int i = 0; i < PhotonNetwork.playerList.Length; i++) {
 
-            Debug.Log(PhotonNetwork.playerList[i].NickName);
-
             if (PhotonNetwork.playerList[i].IsMasterClient) {
                 ballsLocalCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
             else {
                 ballsRemoteCountTxt.text = PhotonNetwork.playerList[i].CustomProperties["score"].ToString();
             }
+
+            //turnController._activeTurn == m_TurnController.Turn.local
+
+
         }
-        
 
         /*if (currentBallsCount < 1) {
             m_GameController.data.Complete();
